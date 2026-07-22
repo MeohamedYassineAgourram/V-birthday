@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>生日快乐 🎂</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎂</text></svg>">
+<link rel="preload" as="image" href="img/hero.jpg">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="app" id="app">
+  <div class="dots" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <div class="brand" id="brand">shin<em>.io</em></div>
+
+    <nav class="pillnav" id="pillnav">
+      <button data-nav="hero"><span class="ar">↳</span> Home</button>
+      <button data-nav="stops"><span class="ar">↳</span> Stops</button>
+      <button data-nav="gift"><span class="ar">↳</span> Gift</button>
+    </nav>
+
+    <div class="topright">
+      <div class="candles" id="candles" title="candles earned"></div>
+      <button class="icon-btn" id="soundBtn" aria-label="toggle sound">🔇</button>
+    </div>
+  </header>
+
+  <main id="stage" class="stage"></main>
+
+  <footer class="stopstrip" id="stopstrip"></footer>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<canvas class="confetti-layer" id="confetti"></canvas>
+
+<svg class="svg-defs" aria-hidden="true"><defs>
+  <filter id="crayon">
+    <feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="3" seed="7" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="2" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</defs></svg>
+
+<script src="vendor/three.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/art.js"></script>
+<script src="js/core.js"></script>
+<script src="js/hero3d.js"></script>
+<script src="js/scenes/hero.js"></script>
+<script src="js/scenes/chocobi.js"></script>
+<script src="js/scenes/memory.js"></script>
+<script src="js/scenes/debugjs.js"></script>
+<script src="js/scenes/valorant.js"></script>
+<script src="js/scenes/spike.js"></script>
+<script src="js/scenes/cake.js"></script>
+<script src="js/boot.js"></script>
+</body>
+</html>
