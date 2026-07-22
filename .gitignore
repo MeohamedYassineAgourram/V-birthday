@@ -1,2 +1,5 @@
 .DS_Store
 **/.DS_Store
+
+# source model — optimized copy lives in models/island.glb
+stylized_3d_floating_island_and_mine_house.glb

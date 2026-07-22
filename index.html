@@ -26,18 +26,29 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <canvas class="confetti-layer" id="confetti"></canvas>
 
-<script src="vendor/three.min.js"></script>
-<script src="js/config.js"></script>
-<script src="js/art.js"></script>
-<script src="js/core.js"></script>
-<script src="js/world3d.js"></script>
-<script src="js/cake3d.js"></script>
-<script src="js/scenes/world.js"></script>
-<script src="js/scenes/chocobi.js"></script>
-<script src="js/scenes/memory.js"></script>
-<script src="js/scenes/debugjs.js"></script>
-<script src="js/scenes/valorant.js"></script>
-<script src="js/scenes/cake.js"></script>
-<script src="js/boot.js"></script>
+<!-- three.js and the GLTF loader are ES modules; expose them as globals, then
+     load the rest of the app (classic scripts that read window.THREE) in order. -->
+<script type="importmap">
+{ "imports": { "three": "./vendor/three.module.js" } }
+</script>
+<script type="module">
+  import * as THREE from "three";
+  import { GLTFLoader } from "./vendor/GLTFLoader.js";
+  window.THREE = THREE;
+  window.GLTFLoader = GLTFLoader;
+
+  const files = [
+    "js/config.js", "js/art.js", "js/core.js", "js/world3d.js", "js/cake3d.js",
+    "js/scenes/world.js", "js/scenes/chocobi.js", "js/scenes/memory.js",
+    "js/scenes/debugjs.js", "js/scenes/valorant.js", "js/scenes/cake.js", "js/boot.js"
+  ];
+  for (const src of files) {
+    await new Promise((res, rej) => {
+      const s = document.createElement("script");
+      s.src = src; s.onload = res; s.onerror = () => rej(new Error("failed: " + src));
+      document.body.appendChild(s);
+    });
+  }
+</script>
 </body>
 </html>

@@ -9,6 +9,9 @@ Game.scenes.world = (stage) => {
 
     <div class="viewport" id="viewport">
       <div class="signposts" id="signposts"></div>
+      <div class="vp-loading" id="loading">
+        <span class="spin"></span> shaping the island…
+      </div>
     </div>
 
     <!-- caption sits under the scene: markers on the far side project high in the frame -->
@@ -22,6 +25,7 @@ Game.scenes.world = (stage) => {
   const viewport = view.querySelector("#viewport");
   const posts = view.querySelector("#signposts");
   const blurb = view.querySelector("#blurb");
+  const loading = view.querySelector("#loading");
   const defaultBlurb = blurb.textContent.trim();
 
   const nodes = {};
@@ -52,8 +56,24 @@ Game.scenes.world = (stage) => {
     Game.go(s.id);
   };
 
+  // hide signposts until the model resolves, so they don't float over empty sky
+  posts.style.opacity = "0";
+
   Game._3d = typeof World3D !== "undefined"
     ? World3D.createWorld(viewport, STOPS, {
+        onReady: () => {
+          loading.classList.add("gone");
+          posts.style.transition = "opacity .6s ease";
+          posts.style.opacity = "1";
+        },
+        onError: () => {
+          loading.classList.add("gone");
+          Game._3d = null;
+          posts.classList.add("flat");
+          posts.style.opacity = "1";
+          Object.values(nodes).forEach(n => { n.style.transform = "none"; n.style.opacity = "1"; });
+          cancelAnimationFrame(layoutRaf);
+        },
         onPick: id => { const s = STOPS.find(x => x.id === id); if (s) enter(s); },
         onHover: id => {
           const s = id && STOPS.find(x => x.id === id);
@@ -69,7 +89,7 @@ Game.scenes.world = (stage) => {
      projects to nearly the same point — placing each label independently made
      them overlap. Resolve collisions across the whole set instead. */
   const GAP = 40, NEAR = 104;
-  let layoutRaf;
+  let layoutRaf = 0;
   const layout = () => {
     if (!view.isConnected) return;
     layoutRaf = requestAnimationFrame(layout);

@@ -13,17 +13,20 @@ Opening `index.html` directly works too — classic scripts, no modules, no buil
 
 ## The world
 
-The landing page *is* the map: a flat-shaded three.js island — bright grass, chunky warm
-rock, faceted trees, debris drifting underneath — turning slowly in a creamy sky. You
-**drag to orbit** it. Five waypoints glow on the grass; each has a signpost anchored to it
-in HTML, tracked to its 3D position every frame.
+The landing page *is* the map: a detailed glTF floating island (a house with a blue roof,
+a waterfall, pines, drifting rock debris) turning slowly in a warm sunset sky. You **drag
+to orbit** it. Five waypoints glow on the island; each has a signpost anchored to it in
+HTML, tracked to its 3D position every frame.
+
+The model ships at `models/island.glb` (~15 MB). The original was 163 MB — see *The model*
+below.
 
 Clicking a waypoint drops you into that mission's own world. Every world has its own sky,
 type colour, surface tint and weather, all driven off `[data-world]` on `<body>`:
 
 | World | Sky | Weather |
 |---|---|---|
-| Map | creamy white | drifting clouds |
+| Map | warm sunset | drifting clouds + sun bloom |
 | GATHER | bright afternoon | drifting clouds |
 | PUZZLE | lilac dusk | falling petals |
 | BATTLE | deep night | starfield |
@@ -58,8 +61,6 @@ Everything personal is in **`js/config.js`** — nothing else contains her name.
   output they would produce; exactly one wins.
 - **3D** is three.js r149 (MIT), vendored in `vendor/` so it works offline. Both the
   world and the cake fall back gracefully if WebGL is missing.
-- The island is `flatShading: true` throughout — that, plus deliberately *low* ambient
-  light, is what gives low-poly its facet contrast. Bright ambient washes it to pastel.
 - Signpost labels are laid out as a set each frame, not independently: the summit sits at
   the island's centre, so anything directly behind it projects to nearly the same point
   and the labels collide unless they're resolved together.
@@ -73,6 +74,25 @@ Everything personal is in **`js/config.js`** — nothing else contains her name.
 - `?dev=valorant` (or any mission id) jumps straight in
 - `Shift+N` clears the current mission
 
+## The model
+
+`models/island.glb` is an optimized copy of a 163 MB Sketchfab model. The pipeline
+(scratch, not committed) that produced it:
+
+1. drop tangents (no normal maps survive the downscale) — ~10 MB
+2. dedup + weld + prune
+3. **simplify** to ~45% of triangles (712k → 365k) — visually identical
+4. **compress** all 76 textures to 512px WebP (122 MB → ~3 MB)
+5. **quantize** positions/normals/uvs — decoded natively by three.js, no worker
+
+Result: 163 MB → 15 MB, loads in ~1s. Quantize (not Draco) on purpose — Draco needs a
+Web Worker + WASM decoder that hung silently in testing; quantization decodes on the main
+thread with zero extra dependencies. The 163 MB source is gitignored.
+
+three.js and the loaders are ES modules now, loaded via an import map; a small bootstrap
+in `index.html` exposes `THREE` and `GLTFLoader` as globals, then loads the rest of the
+app (classic scripts) in order.
+
 ## Files
 
 ```
@@ -80,7 +100,9 @@ index.html          the shell: sky layer, floating chrome
 styles.css          the whole design system
 js/config.js        ← the only file with anything personal in it
 js/core.js          missions, router, progress, sound, confetti
-js/world3d.js       the low-poly island, waypoints, projection callbacks
+js/world3d.js       loads island.glb, waypoints, projection callbacks
+vendor/             three.module.js, GLTFLoader, BufferGeometryUtils (ESM)
+models/island.glb   the optimized 3D island
 js/cake3d.js        the summit cake
 js/scenes/*.js      one file per mission
 img/sq/             face-focused square crops (memory tiles, range targets, portraits)

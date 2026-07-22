@@ -15,14 +15,14 @@
 /* ---------- worlds ---------- */
 /* the landing: an empty, creamy sky */
 [data-world="map"], [data-world="hero"]{
-  --sky:linear-gradient(180deg,#EFF6F9 0%,#FAF6EE 46%,#F6EFE2 100%);
-  --fg:#20242A; --fg-2:#5A6068; --fg-3:#8A9099;
-  --surface:rgba(255,255,255,.66); --surface-hi:rgba(255,255,255,.9);
-  --line:rgba(32,36,42,.1); --line-hi:rgba(32,36,42,.18);
-  --solid:#20242A; --on-solid:#FFFFFF;
-  --accent:#E08A3C;
-  --shadow:0 6px 20px rgba(60,60,50,.09);
-  --shadow-lg:0 22px 60px rgba(60,60,50,.16);
+  --sky:linear-gradient(180deg,#4A7BA6 0%,#6E9BC0 22%,#B9C9D4 44%,#F4C9A8 72%,#FBE0C0 100%);
+  --fg:#FFFFFF; --fg-2:rgba(255,255,255,.82); --fg-3:rgba(255,255,255,.6);
+  --surface:rgba(255,255,255,.16); --surface-hi:rgba(255,255,255,.9);
+  --line:rgba(255,255,255,.34); --line-hi:rgba(255,255,255,.5);
+  --solid:#FFFFFF; --on-solid:#2A2320;
+  --accent:#FF9A52;
+  --shadow:0 8px 26px rgba(60,40,30,.22);
+  --shadow-lg:0 26px 70px rgba(60,40,30,.3);
 }
 /* GATHER — a bright open afternoon */
 [data-world="chocobi"]{
@@ -92,11 +92,18 @@ img{max-width:100%;display:block}
 
 /* ---------- sky ---------- */
 .sky{position:fixed;inset:0;z-index:0;background:var(--sky);transition:background .8s ease;overflow:hidden}
+/* a warm sun bloom low on the landing sky */
+[data-world="map"] .sky::after,[data-world="hero"] .sky::after{
+  content:"";position:absolute;left:16%;bottom:6%;width:52vw;height:52vw;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,236,190,.75),rgba(255,214,150,.24) 42%,transparent 66%);
+  filter:blur(6px);pointer-events:none;
+}
 .ambient{position:absolute;inset:0}
 
 /* whatever drifts through this particular world */
 .amb{position:absolute;will-change:transform;pointer-events:none}
 .amb.cloud{background:#fff;border-radius:100px;opacity:.9;animation:drift linear infinite}
+[data-world="map"] .amb.cloud,[data-world="hero"] .amb.cloud{background:#FFF3E4}
 .amb.cloud::before,.amb.cloud::after{content:"";position:absolute;background:#fff;border-radius:100px}
 .amb.cloud::before{width:56%;height:160%;left:11%;top:-64%}
 .amb.cloud::after{width:40%;height:126%;right:11%;top:-44%}
@@ -236,6 +243,12 @@ p{margin:0 0 12px;line-height:1.62;color:var(--fg-2);font-size:clamp(14.5px,1.55
 .signposts.flat .signpost::after{display:none}
 .vp-hint-static{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--fg-3);
   margin-top:10px;pointer-events:none}
+.vp-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:10px;
+  z-index:5;font-size:13px;color:var(--fg-2);transition:opacity .5s ease}
+.vp-loading.gone{opacity:0;pointer-events:none}
+.vp-loading .spin{width:18px;height:18px;border-radius:50%;border:2px solid var(--line-hi);
+  border-top-color:var(--fg);animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 
 /* ---------- game frame ---------- */
 .frame{position:relative;width:100%;aspect-ratio:16/10;max-height:48vh;overflow:hidden;border-radius:15px;
