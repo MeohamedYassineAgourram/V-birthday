@@ -26,7 +26,7 @@ type colour, surface tint and weather, all driven off `[data-world]` on `<body>`
 
 | World | Sky | Weather |
 |---|---|---|
-| Map | warm sunset | drifting clouds + sun bloom |
+| Map | warm sunset | painted volumetric cumulus, low sun + god rays |
 | GATHER | bright afternoon | drifting clouds |
 | PUZZLE | lilac dusk | falling petals |
 | BATTLE | deep night | starfield |
@@ -100,6 +100,7 @@ index.html          the shell: sky layer, floating chrome
 styles.css          the whole design system
 js/config.js        ← the only file with anything personal in it
 js/core.js          missions, router, progress, sound, confetti
+js/sky.js           the painted sunset cloudscape (landing only)
 js/world3d.js       loads island.glb, waypoints, projection callbacks
 vendor/             three.module.js, GLTFLoader, BufferGeometryUtils (ESM)
 models/island.glb   the optimized 3D island

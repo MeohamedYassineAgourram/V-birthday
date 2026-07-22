@@ -92,12 +92,7 @@ img{max-width:100%;display:block}
 
 /* ---------- sky ---------- */
 .sky{position:fixed;inset:0;z-index:0;background:var(--sky);transition:background .8s ease;overflow:hidden}
-/* a warm sun bloom low on the landing sky */
-[data-world="map"] .sky::after,[data-world="hero"] .sky::after{
-  content:"";position:absolute;left:16%;bottom:6%;width:52vw;height:52vw;border-radius:50%;
-  background:radial-gradient(circle,rgba(255,236,190,.75),rgba(255,214,150,.24) 42%,transparent 66%);
-  filter:blur(6px);pointer-events:none;
-}
+.skyfx{position:absolute;inset:0;width:100%;height:100%;display:block}
 .ambient{position:absolute;inset:0}
 
 /* whatever drifts through this particular world */

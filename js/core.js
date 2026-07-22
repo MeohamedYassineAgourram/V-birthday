@@ -45,11 +45,20 @@ const Game = {
   },
 
   /* every scene is its own world: a flat sky colour and whatever drifts through it */
+  _sky: null,
   setWorld(name) {
     document.body.dataset.world = STOPS.some(x => x.id === name) ? name : "map";
     const amb = document.getElementById("ambient");
     if (!amb) return;
     amb.innerHTML = "";
+
+    // the landing gets a full painted sunset cloudscape; other worlds keep CSS weather
+    const sunset = !STOPS.some(x => x.id === name);   // map / hero
+    if (this._sky) { this._sky.dispose(); this._sky = null; }
+    if (sunset && typeof SkyFX !== "undefined") {
+      this._sky = SkyFX.mount(document.querySelector(".sky"));
+      return;                                          // no CSS puffs on the landing
+    }
     const add = (cls, style) => amb.appendChild(el(`<span class="amb ${cls}" style="${style}"></span>`));
     const rand = (a, b) => a + Math.random() * (b - a);
 
