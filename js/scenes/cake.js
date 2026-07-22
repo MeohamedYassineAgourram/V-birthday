@@ -1,20 +1,23 @@
-/* Stop 6 — the cake, in 3D. Blow into the mic to put the candles out. */
+/* The summit — 心愿 WISH. Blow out the candles, then the letter. */
 Game.scenes.cake = (stage) => {
-  const card = el(`<section class="panel center enter">
+  const N = STOPS.length;
+
+  const card = el(`<section class="scroll center enter">
     <div class="head" style="text-align:left">
-      <div class="n" style="background:#E86AA0">06</div>
+      <div class="glyph" style="--c:#B5766A">愿</div>
       <div class="t">
+        <div class="val-tag" style="color:#B5766A">The Summit · Wish</div>
         <h2>Make a wish</h2>
-        <p id="prompt">Six candles. Blow into your microphone to put them out.</p>
+        <p id="prompt">${N} candles, one for every seal. Blow into your microphone to put them out.</p>
       </div>
     </div>
 
-    <div class="scene" id="cake3d" style="height:min(44vh,400px);margin:0"></div>
+    <div class="viewport" id="cake3d" style="height:min(42vh,380px);margin:0;cursor:default"></div>
     <div id="fallback"></div>
 
     <div class="meter"><i id="bar"></i></div>
     <div class="row">
-      <button class="btn dark" id="mic">🎤 Turn on the microphone</button>
+      <button class="btn primary" id="mic">🎤 Turn on the microphone</button>
       <button class="btn" id="manual">…or click to blow 💨</button>
     </div>
     <p class="muted" style="margin-top:12px">
@@ -28,16 +31,13 @@ Game.scenes.cake = (stage) => {
   const prompt = card.querySelector("#prompt");
   let stream = null, raf = null, blowFrames = 0, finished = false;
 
-  /* 3D cake, or a flat fallback if WebGL is unavailable */
-  Game._3d = typeof Hero3D !== "undefined" ? Hero3D.create(sceneEl, "cake") : null;
-  let fallbackLit = 6;
+  Game._3d = typeof Cake3D !== "undefined" ? Cake3D.create(sceneEl, N) : null;
+  let fallbackLit = N;
   if (!Game._3d) {
     sceneEl.style.display = "none";
     card.querySelector("#fallback").innerHTML =
-      `<div style="font-size:clamp(48px,13vw,96px);line-height:1.1" id="fbCake">🕯️🕯️🕯️🕯️🕯️🕯️<br>🎂</div>`;
+      `<div style="font-size:clamp(44px,12vw,88px);line-height:1.2" id="fbCake">${"🕯️".repeat(N)}<br>🎂</div>`;
   }
-
-  const litLeft = () => Game._3d ? Game._3d.litCount() : fallbackLit;
 
   const puff = () => {
     if (finished) return;
@@ -47,7 +47,7 @@ Game.scenes.cake = (stage) => {
     } else {
       fallbackLit = Math.max(0, fallbackLit - 1);
       left = fallbackLit;
-      card.querySelector("#fbCake").innerHTML = "🕯️".repeat(left) + "💨".repeat(6 - left) + "<br>🎂";
+      card.querySelector("#fbCake").innerHTML = "🕯️".repeat(left) + "💨".repeat(N - left) + "<br>🎂";
     }
     Game.sfx("pop");
     if (left <= 0) finish();
@@ -59,8 +59,9 @@ Game.scenes.cake = (stage) => {
     finished = true;
     cancelAnimationFrame(raf);
     if (stream) stream.getTracks().forEach(t => t.stop());
-    Game.lit = STOPS.length;
-    Game.renderCandles();
+    Game.done.add("cake");
+    Game.save();
+    Game.renderChrome();
     Game.melody();
     Game.rain(7);
     setTimeout(() => showLetter(stage), 1000);
@@ -85,7 +86,7 @@ Game.scenes.cake = (stage) => {
 
       const tick = () => {
         an.getByteFrequencyData(data);
-        let sum = 0;                                    // low band ≈ breath, not speech
+        let sum = 0;                                   // low band ≈ breath, not speech
         for (let i = 2; i < 26; i++) sum += data[i];
         const level = Math.min(1, (sum / 24) / 128);
         bar.style.width = (level * 100) + "%";
@@ -106,17 +107,17 @@ Game.scenes.cake = (stage) => {
 function showLetter(stage) {
   if (Game._3d) { Game._3d.dispose(); Game._3d = null; }
 
-  const card = el(`<section class="panel enter" style="max-width:720px">
+  const card = el(`<section class="scroll enter" style="max-width:660px">
     <div class="center">
       <div class="win-photo"><img src="img/sq/hero.jpg" alt=""></div>
-      <div class="eyebrow">🎉 all six candles out</div>
-      <h2 style="margin-bottom:22px">生日快乐, ${CONFIG.name}!</h2>
+      <div class="rule">◆ 旅程终点 ◆</div>
+      <h2 style="margin-bottom:20px">生日快乐, ${CONFIG.name}</h2>
     </div>
     <div class="letter" id="letter"></div>
     <div class="signoff" id="sig">${CONFIG.letterSignoff}</div>
     <div class="row" style="margin-top:22px">
-      <button class="btn dark" id="again">🎉 more confetti</button>
-      <button class="btn" id="replay">↺ play again</button>
+      <button class="btn primary" id="again">✦ More petals</button>
+      <button class="btn" id="replay">↺ Journey again</button>
     </div>
   </section>`);
   stage.innerHTML = "";
@@ -136,7 +137,7 @@ function showLetter(stage) {
   card.querySelector("#again").onclick = () => { Game.burst(130); Game.melody(); };
   card.querySelector("#replay").onclick = () => {
     try { localStorage.removeItem(Game.KEY); } catch (e) {}
-    Game.lit = 0;
-    Game.go("hero");
+    Game.done = new Set();
+    Game.go("world");
   };
 }

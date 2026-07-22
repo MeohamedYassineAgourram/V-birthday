@@ -4,13 +4,13 @@ Game.scenes.valorant = (stage) => {
   const TARGET = CONFIG.rangeTargets || 15;
   const FACES = ["hero", "ramen", "night", "study", "room", "field"];
 
-  const wrap = el(`<section class="val-wrap enter">
+  const wrap = el(`<section class="scroll dark enter">
     <div class="head" style="margin-bottom:14px">
-      <div class="n" style="background:var(--val)">03</div>
+      <div class="glyph" style="--c:#A8503C">战</div>
       <div class="t">
-        <div class="val-tag">The Range · Unrated</div>
+        <div class="val-tag">Trial III · Battle · The Range</div>
         <h2>Flick on the Shin-chans</h2>
-        <p style="color:#8E96A3;margin-top:4px">
+        <p style="margin-top:4px">
           ${TARGET} kills to clear. The top third of the head counts as a headshot 🎯
         </p>
       </div>
@@ -27,7 +27,7 @@ Game.scenes.valorant = (stage) => {
         <div class="val-stat"><b id="hs">0</b><span>Headshots</span></div>
         <div class="val-stat"><b id="streak">0</b><span>Streak</span></div>
       </div>
-      <div class="muted" style="color:#6D7581">click / tap the targets</div>
+      <div class="muted">click / tap the targets</div>
     </div>
   </section>`);
   stage.appendChild(wrap);

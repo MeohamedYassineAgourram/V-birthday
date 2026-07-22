@@ -2,10 +2,11 @@
 Game.scenes.chocobi = (stage) => {
   const target = CONFIG.chocobiTarget;
 
-  const card = el(`<section class="panel enter">
+  const card = el(`<section class="scroll enter">
     <div class="head">
-      <div class="n" style="background:#E8402A">01</div>
+      <div class="glyph" style="--c:#C9A64E">拾</div>
       <div class="t">
+        <div class="val-tag" style="color:#C9A64E">Trial I · Gather</div>
         <h2>Chocobi Rain</h2>
         <p>Catch <b>${target}</b> Chocobi. Green peppers are the enemy — Shin-chan has standards.</p>
       </div>

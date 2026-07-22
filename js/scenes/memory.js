@@ -3,10 +3,11 @@ Game.scenes.memory = (stage) => {
   const FACES = ["hero", "field", "night", "room", "study", "ramen"];
   const deck = shuffle([...FACES, ...FACES]);
 
-  const card = el(`<section class="panel enter" style="max-width:640px">
+  const card = el(`<section class="scroll enter" style="max-width:620px">
     <div class="head">
-      <div class="n" style="background:#2C9BE8">02</div>
+      <div class="glyph" style="--c:#6E8FA0">谜</div>
       <div class="t">
+        <div class="val-tag" style="color:#6E8FA0">Trial II · Puzzle</div>
         <h2>Shiro's Lost Photos</h2>
         <p>He buried the whole album in the garden again. Find all six pairs.</p>
       </div>
