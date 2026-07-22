@@ -4,11 +4,11 @@ Game.scenes.valorant = (stage) => {
   const TARGET = CONFIG.rangeTargets || 15;
   const FACES = ["hero", "ramen", "night", "study", "room", "field"];
 
-  const wrap = el(`<section class="scroll dark enter">
+  const wrap = el(`<section class="panel dim enter">
     <div class="head" style="margin-bottom:14px">
-      <div class="glyph" style="--c:#A8503C">战</div>
+      <div class="glyph" style="--c:#E8563F">战</div>
       <div class="t">
-        <div class="val-tag">Trial III · Battle · The Range</div>
+        <div class="kicker" style="--c:#E8563F">Trial · Battle · The Range</div>
         <h2>Flick on the Shin-chans</h2>
         <p style="margin-top:4px">
           ${TARGET} kills to clear. The top third of the head counts as a headshot 🎯

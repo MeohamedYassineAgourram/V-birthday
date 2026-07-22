@@ -1,7 +1,7 @@
-# 奇幻旅程 · Fantasy Journey
+# Vivian's Journey
 
-A birthday gift: an explorable 3D island with five missions, in the style of an
-illustrated indie-game poster.
+A birthday gift: an explorable 3D island with five missions, built as a cinematic
+full-bleed photographic site with frosted-glass chrome.
 
 ## Run it
 
@@ -13,10 +13,13 @@ Opening `index.html` directly works too — classic scripts, no modules, no buil
 
 ## The world
 
-The hub is a real 3D diorama (three.js): a floating terraced island with a summit,
-a windmill, a castle, a caped traveller and a black cat. You **drag to orbit** it.
-Five waypoints glow on the terrain; each has a wooden signpost anchored to it in HTML,
-tracked to its 3D position every frame.
+Every screen is a full-bleed Shin-chan photograph with floating glass chrome on top;
+the backdrop crossfades as you move between scenes.
+
+The hub is a real 3D diorama (three.js) composited **directly over the photograph** —
+a floating terraced island with a summit, a windmill, a castle, a caped traveller and a
+black cat. You **drag to orbit** it. Five waypoints glow on the terrain; each has a glass
+signpost anchored to it in HTML, tracked to its 3D position every frame.
 
 | 印 | Mission | What it is |
 |---|---|---|
@@ -48,6 +51,9 @@ Everything personal is in **`js/config.js`** — nothing else contains her name.
   world and the cake fall back gracefully if WebGL is missing.
 - Props are placed with `surfaceY()` against the island's domed cap — the ground is a
   curved surface, so anything placed at a flat height sinks into the terrain.
+- The island's fog and lighting are tuned to match the *scrimmed* photo behind the canvas.
+  The scrim darkens the photograph but not the WebGL layer, so matching them by eye is
+  the only way to stop the island reading as a pale cutout.
 - **Sound** is synthesized via Web Audio — no audio files. Starts muted.
 - **Mic** only measures loudness in the low-frequency band. Nothing is recorded or
   sent, and there's always a click-to-blow button if permission is denied.
@@ -61,13 +67,14 @@ Everything personal is in **`js/config.js`** — nothing else contains her name.
 ## Files
 
 ```
-index.html          the parchment shell: frame, seals, emblem footer
+index.html          the shell: photo backdrop, glass chrome
 styles.css          the whole design system
 js/config.js        ← the only file with anything personal in it
 js/core.js          missions, router, progress, sound, confetti
 js/world3d.js       the 3D island, waypoints, projection callbacks
 js/cake3d.js        the summit cake
 js/scenes/*.js      one file per mission
-img/                web-sized art + face-focused square crops
+img/                web-sized art + face-focused square crops (img/sq)
+img/bg/             16:9 background crops, framed so type lands on negative space
 docs/images/        the original images
 ```

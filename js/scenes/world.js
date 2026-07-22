@@ -1,21 +1,15 @@
-/* The hub: a 3D island you orbit, with mission signposts pinned to its waypoints. */
+/* The map: the 3D island composited straight over the photograph, glass signposts on top. */
 Game.scenes.world = (stage) => {
-  const view = el(`<section class="world enter">
-    <div class="world-title">
-      <h1>奇幻旅程</h1>
-      <div class="sub">→&nbsp; ${CONFIG.name.toUpperCase()}'S JOURNEY &nbsp;←</div>
-      <div class="ribbon">生日快乐 · 一段关于蜡笔小新的旅程</div>
-    </div>
+  const view = el(`<section class="map-wrap enter">
+    <div class="badge">${Game.lit} of ${STOPS.length} seals recovered</div>
+    <h2 style="margin-bottom:6px">Choose a trial</h2>
+    <p class="muted" id="blurb" style="min-height:22px">
+      The four trials can be taken in any order. The summit opens once all four are done.
+    </p>
 
     <div class="viewport" id="viewport">
       <div class="signposts" id="signposts"></div>
-      <div class="vp-hint">drag to look around · click a marker to begin</div>
-    </div>
-
-    <div class="world-foot">
-      <p class="lead center" id="blurb">
-        Five seals are scattered across the island. Bring them all to the summit.
-      </p>
+      <div class="vp-hint">drag to look around</div>
     </div>
   </section>`);
   stage.appendChild(view);
@@ -25,14 +19,13 @@ Game.scenes.world = (stage) => {
   const blurb = view.querySelector("#blurb");
   const defaultBlurb = blurb.textContent.trim();
 
-  /* one wooden signpost per mission, positioned each frame from the 3D projection */
   const nodes = {};
   STOPS.forEach(s => {
     const open = Game.unlocked(s.id);
     const cleared = Game.done.has(s.id);
     const n = el(`<button class="signpost ${cleared ? "done" : ""} ${open ? "" : "locked"}" style="--c:${s.color}">
       <span class="post-cn">${s.cn}</span>
-      <span class="post-en">${open ? s.en : "封印"}</span>
+      <span class="post-en">${open ? s.en : "LOCKED"}</span>
       ${cleared ? `<span class="post-tick">✦</span>` : ""}
     </button>`);
     n.onclick = () => enter(s);
@@ -45,7 +38,7 @@ Game.scenes.world = (stage) => {
   const enter = (s) => {
     if (!Game.unlocked(s.id)) {
       Game.sfx("bad");
-      Game.toast("The summit is sealed until the four trials are done 🔒", 2600);
+      Game.toast("The summit stays sealed until the four trials are done", 2600);
       return;
     }
     Game.audio();
@@ -53,7 +46,6 @@ Game.scenes.world = (stage) => {
     Game.go(s.id);
   };
 
-  /* ---- 3D world, with a flat fallback ---- */
   Game._3d = typeof World3D !== "undefined"
     ? World3D.createWorld(viewport, STOPS, {
         onPick: id => { const s = STOPS.find(x => x.id === id); if (s) enter(s); },
@@ -73,8 +65,6 @@ Game.scenes.world = (stage) => {
     : null;
 
   if (!Game._3d) {
-    // no WebGL — fall back to a flat illustrated map
-    viewport.classList.add("flat");
     posts.classList.add("flat");
     Object.values(nodes).forEach(n => { n.style.transform = "none"; n.style.opacity = "1"; });
   }

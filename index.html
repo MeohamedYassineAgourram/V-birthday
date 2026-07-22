@@ -3,30 +3,32 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>奇幻旅程 · Fantasy Journey</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗺️</text></svg>">
+<title>Happy Birthday</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎂</text></svg>">
+<link rel="preload" as="image" href="img/hero.jpg">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<div class="app" id="app">
-  <div class="frame-rule" aria-hidden="true"></div>
-  <svg class="corner tl" viewBox="0 0 40 40" aria-hidden="true"><path d="M2 38V14C2 7 7 2 14 2h24" fill="none" stroke="#4A4130" stroke-width="2"/><circle cx="14" cy="14" r="3.2" fill="#4A4130"/><path d="M14 26c8 0 12-4 12-12" fill="none" stroke="#4A4130" stroke-width="1.2"/></svg>
-  <svg class="corner tr" viewBox="0 0 40 40" aria-hidden="true"><path d="M2 38V14C2 7 7 2 14 2h24" fill="none" stroke="#4A4130" stroke-width="2"/><circle cx="14" cy="14" r="3.2" fill="#4A4130"/><path d="M14 26c8 0 12-4 12-12" fill="none" stroke="#4A4130" stroke-width="1.2"/></svg>
-  <svg class="corner bl" viewBox="0 0 40 40" aria-hidden="true"><path d="M2 38V14C2 7 7 2 14 2h24" fill="none" stroke="#4A4130" stroke-width="2"/><circle cx="14" cy="14" r="3.2" fill="#4A4130"/><path d="M14 26c8 0 12-4 12-12" fill="none" stroke="#4A4130" stroke-width="1.2"/></svg>
-  <svg class="corner br" viewBox="0 0 40 40" aria-hidden="true"><path d="M2 38V14C2 7 7 2 14 2h24" fill="none" stroke="#4A4130" stroke-width="2"/><circle cx="14" cy="14" r="3.2" fill="#4A4130"/><path d="M14 26c8 0 12-4 12-12" fill="none" stroke="#4A4130" stroke-width="1.2"/></svg>
-
-  <header class="topbar">
-    <div class="brand">奇幻旅程<em>FANTASY JOURNEY</em></div>
-    <button class="back-btn hidden" id="toWorld">↩ Map</button>
-    <div class="seals" id="seals" title="seals recovered"></div>
-    <button class="icon-btn" id="soundBtn" aria-label="toggle sound">🔇</button>
-  </header>
-
-  <main id="stage" class="stage"></main>
-
-  <footer class="emblems" id="emblems"></footer>
+<!-- full-bleed photographic backdrop, crossfaded between scenes -->
+<div class="bg" aria-hidden="true">
+  <div class="bg-layer" id="bgA"></div>
+  <div class="bg-layer" id="bgB"></div>
+  <div class="bg-scrim"></div>
 </div>
+
+<header class="chrome">
+  <div class="mark" id="mark">Vivian<span>’s journey</span></div>
+
+  <nav class="pillnav" id="pillnav"></nav>
+
+  <div class="chrome-right">
+    <button class="pill ghost" id="soundBtn" aria-label="toggle sound">🔇</button>
+    <button class="pill solid" id="seals">0 / 5</button>
+  </div>
+</header>
+
+<main id="stage" class="stage"></main>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <canvas class="confetti-layer" id="confetti"></canvas>
@@ -37,6 +39,7 @@
 <script src="js/core.js"></script>
 <script src="js/world3d.js"></script>
 <script src="js/cake3d.js"></script>
+<script src="js/scenes/hero.js"></script>
 <script src="js/scenes/world.js"></script>
 <script src="js/scenes/chocobi.js"></script>
 <script src="js/scenes/memory.js"></script>

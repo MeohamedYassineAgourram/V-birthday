@@ -2,11 +2,11 @@
 Game.scenes.cake = (stage) => {
   const N = STOPS.length;
 
-  const card = el(`<section class="scroll center enter">
+  const card = el(`<section class="panel center enter">
     <div class="head" style="text-align:left">
-      <div class="glyph" style="--c:#B5766A">愿</div>
+      <div class="glyph" style="--c:#D98E8E">愿</div>
       <div class="t">
-        <div class="val-tag" style="color:#B5766A">The Summit · Wish</div>
+        <div class="kicker" style="--c:#D98E8E">The Summit · Wish</div>
         <h2>Make a wish</h2>
         <p id="prompt">${N} candles, one for every seal. Blow into your microphone to put them out.</p>
       </div>
@@ -16,9 +16,9 @@ Game.scenes.cake = (stage) => {
     <div id="fallback"></div>
 
     <div class="meter"><i id="bar"></i></div>
-    <div class="row">
-      <button class="btn primary" id="mic">🎤 Turn on the microphone</button>
-      <button class="btn" id="manual">…or click to blow 💨</button>
+    <div class="cta-row">
+      <button class="btn solid" id="mic">🎤 Turn on the microphone</button>
+      <button class="btn ghost" id="manual">…or click to blow 💨</button>
     </div>
     <p class="muted" style="margin-top:12px">
       Nothing is recorded or sent anywhere — the page only measures how loud it is.
@@ -107,17 +107,17 @@ Game.scenes.cake = (stage) => {
 function showLetter(stage) {
   if (Game._3d) { Game._3d.dispose(); Game._3d = null; }
 
-  const card = el(`<section class="scroll enter" style="max-width:660px">
+  const card = el(`<section class="panel enter" style="max-width:660px">
     <div class="center">
       <div class="win-photo"><img src="img/sq/hero.jpg" alt=""></div>
-      <div class="rule">◆ 旅程终点 ◆</div>
+      <div class="kicker" style="--c:#D98E8E">Journey's end</div>
       <h2 style="margin-bottom:20px">生日快乐, ${CONFIG.name}</h2>
     </div>
     <div class="letter" id="letter"></div>
     <div class="signoff" id="sig">${CONFIG.letterSignoff}</div>
-    <div class="row" style="margin-top:22px">
-      <button class="btn primary" id="again">✦ More petals</button>
-      <button class="btn" id="replay">↺ Journey again</button>
+    <div class="cta-row" style="margin-top:22px">
+      <button class="btn solid" id="again">More confetti</button>
+      <button class="btn ghost" id="replay">Start over</button>
     </div>
   </section>`);
   stage.innerHTML = "";

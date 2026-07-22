@@ -1,6 +1,8 @@
-/* Startup: sound, map button, resume, dev shortcut. */
+/* Startup: wordmark, sound, resume, dev shortcuts. */
 (() => {
-  document.title = `奇幻旅程 · ${CONFIG.name}'s Journey`;
+  document.title = `Happy Birthday, ${CONFIG.name}`;
+  const mark = document.getElementById("mark");
+  if (mark) mark.innerHTML = `${CONFIG.name}<span>’s journey</span>`;
 
   const btn = document.getElementById("soundBtn");
   btn.onclick = () => {
@@ -9,8 +11,6 @@
     if (!Game.muted) { Game.audio(); Game.sfx("good"); }
   };
 
-  document.getElementById("toWorld").onclick = () => Game.go("world");
-
   // DEV ONLY: ?dev=valorant jumps straight to a mission
   const dev = new URLSearchParams(location.search).get("dev");
   if (dev && Game.order.includes(dev)) {
@@ -18,22 +18,22 @@
     return Game.go(dev);
   }
 
-  // resume where she left off
+  // resume progress
   try {
     const saved = JSON.parse(localStorage.getItem(Game.KEY) || "null");
     if (saved && Array.isArray(saved.done)) {
       saved.done.forEach(id => STOPS.some(s => s.id === id) && Game.done.add(id));
-      if (Game.lit) setTimeout(() => Game.toast(`${Game.lit} of ${STOPS.length} seals recovered ✦`, 2600), 900);
+      if (Game.lit) setTimeout(() => Game.toast(`${Game.lit} of ${STOPS.length} seals recovered ✦`, 2600), 1200);
     }
   } catch (e) {}
 
-  if (!Game.lit) setTimeout(() => Game.toast("tip: turn the sound on 🔊", 3000), 2200);
+  if (!Game.lit) setTimeout(() => Game.toast("tip: turn the sound on 🔊", 3000), 2600);
 
-  Game.go("world");
+  Game.go("hero");
 
   // DEV ONLY: Shift+N clears the current mission
   addEventListener("keydown", e => {
-    if (e.shiftKey && e.key.toLowerCase() === "n" && Game.current !== "world") {
+    if (e.shiftKey && e.key.toLowerCase() === "n" && STOPS.some(s => s.id === Game.current)) {
       Game.win(Game.current);
     }
   });

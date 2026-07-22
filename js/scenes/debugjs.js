@@ -30,11 +30,11 @@ Game.scenes.debugjs = (stage) => {
   let order = shuffle(SOLUTION.slice());
   while (order.join() === SOLUTION.join()) order = shuffle(order);
 
-  const card = el(`<section class="scroll enter">
+  const card = el(`<section class="panel enter">
     <div class="head">
-      <div class="glyph" style="--c:#7E8F6B">符</div>
+      <div class="glyph" style="--c:#8FB07A">符</div>
       <div class="t">
-        <div class="val-tag" style="color:#7E8F6B">Trial IV · Runes</div>
+        <div class="kicker" style="--c:#8FB07A">Trial · Runes</div>
         <h2>The Scrambled Runes</h2>
         <p>Four runes, out of order. Click two to swap them until the incantation runs.</p>
       </div>

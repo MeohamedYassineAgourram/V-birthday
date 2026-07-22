@@ -2,15 +2,15 @@
 
 /* The five missions. `pos` is where the waypoint sits in the 3D world. */
 const STOPS = [
-  { id: "chocobi",  cn: "拾遗", en: "GATHER", color: "#C9A64E", photo: "room",
+  { id: "chocobi",  cn: "拾遗", en: "GATHER", color: "#E3B341", photo: "room",  bg: "room",
     pos: [-5.0, 1.0, 2.6], blurb: "Chocobi falls from the sky. Catch it." },
-  { id: "memory",   cn: "解谜", en: "PUZZLE", color: "#6E8FA0", photo: "study",
+  { id: "memory",   cn: "解谜", en: "PUZZLE", color: "#7FA8C4", photo: "study", bg: "study",
     pos: [5.2, 1.0, 2.2], blurb: "Shiro buried the album. Find the pairs." },
-  { id: "valorant", cn: "战斗", en: "BATTLE", color: "#A8503C", photo: "hero",
+  { id: "valorant", cn: "战斗", en: "BATTLE", color: "#E8563F", photo: "hero",  bg: "night",
     pos: [5.4, 1.6, -3.4], blurb: "The range awaits. Flick, don't spray." },
-  { id: "debugjs",  cn: "符文", en: "RUNES",  color: "#7E8F6B", photo: "night",
+  { id: "debugjs",  cn: "符文", en: "RUNES",  color: "#8FB07A", photo: "night", bg: "ramen",
     pos: [-4.6, 2.2, -3.8], blurb: "Four runes, out of order. Restore them." },
-  { id: "cake",     cn: "心愿", en: "WISH",   color: "#B5766A", photo: "field",
+  { id: "cake",     cn: "心愿", en: "WISH",   color: "#D98E8E", photo: "field", bg: "hero",
     pos: [0, 3.4, -1.2], blurb: "The summit. Make a wish." }
 ];
 const FINALE = "cake";
@@ -19,9 +19,9 @@ const TRIALS = STOPS.filter(s => s.id !== FINALE);   // the four that gate the s
 const Game = {
   stage:  document.getElementById("stage"),
   scenes: {},
-  order:  ["world", ...STOPS.map(s => s.id)],
+  order:  ["hero", "world", ...STOPS.map(s => s.id)],
   done:   new Set(),
-  current: "world",
+  current: "hero",
   _3d:    null,
   KEY:    "shin-bday-v3",
 
@@ -37,10 +37,27 @@ const Game = {
     if (this._3d) { this._3d.dispose(); this._3d = null; }
     this.current = name;
     this.save();
+    this.setBg(name);
     this.stage.innerHTML = "";
     this.renderChrome();
     this.scenes[name](this.stage);
     scrollTo({ top: 0, behavior: "smooth" });
+  },
+
+  /* crossfade the full-bleed photograph between scenes */
+  _bgTop: false,
+  setBg(name) {
+    const stop = STOPS.find(s => s.id === name);
+    const img = name === "hero" ? "field" : name === "world" ? "sky" : (stop && stop.bg) || "sky";
+    const src = `url("img/bg/${img}.jpg")`;
+    const a = document.getElementById("bgA"), b = document.getElementById("bgB");
+    if (!a || !b) return;
+    const next = this._bgTop ? a : b, cur = this._bgTop ? b : a;
+    if (next.style.backgroundImage === src && cur.classList.contains("on")) return;
+    next.style.backgroundImage = src;
+    next.classList.add("on");
+    cur.classList.remove("on");
+    this._bgTop = !this._bgTop;
   },
 
   save() {
@@ -60,16 +77,14 @@ const Game = {
     this.renderChrome();
 
     const allDone = TRIALS.every(s => this.done.has(s.id));
-    const card = el(`<div class="scroll narrow center enter">
-      <div class="seal-mark" style="--c:${stop.color}">${stop.cn}</div>
-      <div class="rule">◆</div>
-      <h2>${stop.en} COMPLETE</h2>
-      <p class="lead">${wasNew ? "A seal is yours." : "Cleared again."}
-        ${this.lit} of ${STOPS.length} seals recovered.</p>
-      ${allDone && !this.done.has(FINALE)
-        ? `<p class="lead" style="color:var(--gold)"><b>The summit path has opened.</b></p>` : ""}
-      <div class="row" style="margin-top:8px">
-        <button class="btn primary" id="back">↩ Return to the map</button>
+    const card = el(`<div class="panel narrow center enter">
+      <div class="win-seal" style="--c:${stop.color}">${stop.cn}</div>
+      <div class="kicker" style="--c:${stop.color}">${stop.en} complete</div>
+      <h2>${wasNew ? "A seal is yours" : "Cleared again"}</h2>
+      <p class="lead">${this.lit} of ${STOPS.length} seals recovered.${
+        allDone && !this.done.has(FINALE) ? " <b>The summit has opened.</b>" : ""}</p>
+      <div class="cta-row">
+        <button class="btn solid" id="back">Return to the map</button>
       </div>
     </div>`);
     this.stage.innerHTML = "";
@@ -77,32 +92,27 @@ const Game = {
     card.querySelector("#back").onclick = () => this.go("world");
   },
 
-  /* ---------- chrome: seals in the header, emblems in the footer ---------- */
+  /* ---------- floating chrome ---------- */
   renderChrome() {
-    const seals = document.getElementById("seals");
-    if (seals) {
-      seals.innerHTML = "";
-      STOPS.forEach(s => {
-        const d = this.done.has(s.id);
-        seals.appendChild(el(
-          `<span class="seal ${d ? "on" : ""}" style="--c:${s.color}" title="${s.cn} ${s.en}">${d ? s.cn : "·"}</span>`
-        ));
-      });
-    }
-    const strip = document.getElementById("emblems");
-    if (strip) {
-      strip.innerHTML = "";
+    const nav = document.getElementById("pillnav");
+    if (nav) {
+      nav.innerHTML = "";
+      const map = el(`<button class="${this.current === "world" ? "on" : ""}">Map</button>`);
+      map.onclick = () => this.go("world");
+      nav.appendChild(map);
       STOPS.forEach(s => {
         const open = this.unlocked(s.id);
-        const b = el(`<button class="emblem ${this.done.has(s.id) ? "done" : ""} ${s.id === this.current ? "on" : ""}"
-            ${open ? "" : "disabled"} style="--c:${s.color}">
-            <b>${s.cn}</b><span>${open ? s.en : "LOCKED"}</span></button>`);
+        const b = el(`<button class="${s.id === this.current ? "on" : ""} ${this.done.has(s.id) ? "done" : ""}"
+          ${open ? "" : "disabled"}>${s.en.charAt(0) + s.en.slice(1).toLowerCase()}</button>`);
         b.onclick = () => open && this.go(s.id);
-        strip.appendChild(b);
+        nav.appendChild(b);
       });
     }
-    const home = document.getElementById("toWorld");
-    if (home) home.classList.toggle("hidden", this.current === "world");
+    const seals = document.getElementById("seals");
+    if (seals) {
+      seals.textContent = `${this.lit} / ${STOPS.length}`;
+      seals.onclick = () => this.go(this.current === "hero" ? "world" : "hero");
+    }
   },
 
   /* ---------- toast ---------- */

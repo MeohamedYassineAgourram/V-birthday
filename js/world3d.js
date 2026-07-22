@@ -19,7 +19,6 @@ const World3D = (() => {
     tree:      0x1F3527,
     treeLight: 0x2C4832,
     silhouette:0x1A2620,
-    water:     0x5E8085,
     stone:     0x9C927A,
     roof:      0x8C5648,
     cloth:     0xA8503C
@@ -152,8 +151,9 @@ const World3D = (() => {
     body.position.y = .42; g.add(body);
     const head = new THREE.Mesh(new THREE.SphereGeometry(.14, 12, 10), mat(0xDBAE84));
     head.position.y = .69; g.add(head);
-    const hair = new THREE.Mesh(new THREE.SphereGeometry(.145, 12, 8, 0, 6.3, 0, 1.5), mat(0xBFB49A));
-    hair.position.y = .70; g.add(hair);
+    // dark hair cap — matching the skin tone made the head read as a featureless ball
+    const hair = new THREE.Mesh(new THREE.SphereGeometry(.148, 12, 8, 0, 6.3, 0, 1.35), mat(0x241C16));
+    hair.position.y = .71; g.add(hair);
     // the red cape
     const cape = new THREE.Mesh(new THREE.ConeGeometry(.26, .62, 8, 1, true), mat(PALETTE.cloth));
     cape.position.set(0, .40, -.09);
@@ -198,33 +198,16 @@ const World3D = (() => {
 
     const scene = new THREE.Scene();
 
-    /* painted sky: warm cream at the horizon, cool blue above */
-    const skyCv = document.createElement("canvas");
-    skyCv.width = 4; skyCv.height = 256;
-    const sctx = skyCv.getContext("2d");
-    const sg = sctx.createLinearGradient(0, 0, 0, 256);
-    sg.addColorStop(0,   "#" + PALETTE.skyTop.toString(16).padStart(6, "0"));
-    sg.addColorStop(.62, "#C3CFC4");
-    sg.addColorStop(1,   "#" + PALETTE.skyLow.toString(16).padStart(6, "0"));
-    sctx.fillStyle = sg; sctx.fillRect(0, 0, 4, 256);
-    const skyTex = new THREE.CanvasTexture(skyCv);
-    skyTex.encoding = THREE.sRGBEncoding;
-    const skyDome = new THREE.Mesh(
-      new THREE.SphereGeometry(120, 24, 16),
-      new THREE.MeshBasicMaterial({ map: skyTex, side: THREE.BackSide, fog: false })
-    );
-    scene.add(skyDome);
-
-    scene.fog = new THREE.Fog(PALETTE.fog, 34, 105);       // atmospheric perspective, like the poster
+    scene.fog = new THREE.Fog(0x54748F, 30, 90);   // matches the scrimmed sky behind the canvas       // atmospheric perspective, like the poster
 
     const camera = new THREE.PerspectiveCamera(38, W0 / H0, .1, 400);
     const CAM_R = 22, CAM_Y = 9.4;
     let camAngle = -.5, camAngleT = -.5;
 
-    scene.add(new THREE.HemisphereLight(0xD8E4DE, 0x2E3A30, .45));
-    const sun = new THREE.DirectionalLight(0xFFF0D2, .82);
+    scene.add(new THREE.HemisphereLight(0xBFD2D8, 0x27332E, .46));
+    const sun = new THREE.DirectionalLight(0xFFE9C9, .78);
     sun.position.set(-8, 12, 6); scene.add(sun);
-    const back = new THREE.DirectionalLight(0x9FBEC6, .28);
+    const back = new THREE.DirectionalLight(0x8FB3C6, .34);
     back.position.set(7, 5, -9); scene.add(back);
 
     const root = new THREE.Group();
@@ -295,16 +278,6 @@ const World3D = (() => {
     cat.scale.setScalar(3.0);
     root.add(cat);
 
-    /* distant mountains, swallowed by fog */
-    for (let i = 0; i < 18; i++) {
-      const a = Math.random() * Math.PI * 2;
-      const r = 48 + Math.random() * 40;
-      const h = 12 + Math.random() * 20;
-      const m = new THREE.Mesh(new THREE.ConeGeometry(5 + Math.random() * 6, h, 6), mat(0x7E9490));
-      m.position.set(Math.cos(a) * r, h / 2 - 6, Math.sin(a) * r);
-      scene.add(m);
-    }
-
     /* floating islets */
     const floaters = [];
     for (let i = 0; i < 5; i++) {
@@ -318,25 +291,6 @@ const World3D = (() => {
       floaters.push(f);
       scene.add(f);
     }
-
-    /* water far below — large enough that its rim never reads as a hard horizon line */
-    const water = new THREE.Mesh(new THREE.CircleGeometry(260, 48), mat(PALETTE.water));
-    water.rotation.x = -Math.PI / 2;
-    water.position.y = -6.2;
-    scene.add(water);
-
-    /* near-black foreground foliage framing the shot — this is what gives the poster its depth */
-    const fg = new THREE.Group();
-    scene.add(fg);
-    for (let i = 0; i < 9; i++) {
-      const a = -.9 + (i / 8) * 1.8 + (Math.random() - .5) * .18;
-      const t = makeTree(3.4 + Math.random() * 2.0, true);
-      t.traverse(o => { if (o.material) o.material = mat(PALETTE.silhouette); });
-      t.position.set(Math.sin(a) * 15.5, -5.4 - Math.random() * 2.2, Math.cos(a) * 15.5);
-      t.userData.a = a;
-      fg.add(t);
-    }
-    fg.userData.trees = fg.children;
 
     /* ---------- mission waypoints ---------- */
     const markers = [];
@@ -421,7 +375,6 @@ const World3D = (() => {
       camera.position.set(Math.sin(camAngle) * CAM_R, CAM_Y, Math.cos(camAngle) * CAM_R);
       camera.lookAt(0, .6, 0);
 
-      fg.rotation.y = camAngle;                        // framing foliage follows the camera
       if (windmill.userData.blades) windmill.userData.blades.rotation.z += .012;
       floaters.forEach(f => { f.position.y = f.userData.baseY + Math.sin(t * .7 + f.userData.ph) * .28; });
       hero.userData.cape.rotation.z = Math.sin(t * 1.6) * .06;
