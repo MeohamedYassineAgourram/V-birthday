@@ -1,7 +1,7 @@
 # Vivian's Journey
 
-A birthday gift: an explorable 3D island with five missions, built as a cinematic
-full-bleed photographic site with frosted-glass chrome.
+A birthday gift: a low-poly island floating in an open sky, with five missions.
+Each mission opens into its own world with its own colour, light and weather.
 
 ## Run it
 
@@ -13,13 +13,22 @@ Opening `index.html` directly works too — classic scripts, no modules, no buil
 
 ## The world
 
-Every screen is a full-bleed Shin-chan photograph with floating glass chrome on top;
-the backdrop crossfades as you move between scenes.
+The landing page *is* the map: a flat-shaded three.js island — bright grass, chunky warm
+rock, faceted trees, debris drifting underneath — turning slowly in a creamy sky. You
+**drag to orbit** it. Five waypoints glow on the grass; each has a signpost anchored to it
+in HTML, tracked to its 3D position every frame.
 
-The hub is a real 3D diorama (three.js) composited **directly over the photograph** —
-a floating terraced island with a summit, a windmill, a castle, a caped traveller and a
-black cat. You **drag to orbit** it. Five waypoints glow on the terrain; each has a glass
-signpost anchored to it in HTML, tracked to its 3D position every frame.
+Clicking a waypoint drops you into that mission's own world. Every world has its own sky,
+type colour, surface tint and weather, all driven off `[data-world]` on `<body>`:
+
+| World | Sky | Weather |
+|---|---|---|
+| Map | creamy white | drifting clouds |
+| GATHER | bright afternoon | drifting clouds |
+| PUZZLE | lilac dusk | falling petals |
+| BATTLE | deep night | starfield |
+| RUNES | dark green | rising embers |
+| WISH | golden hour | light rays |
 
 | 印 | Mission | What it is |
 |---|---|---|
@@ -49,11 +58,11 @@ Everything personal is in **`js/config.js`** — nothing else contains her name.
   output they would produce; exactly one wins.
 - **3D** is three.js r149 (MIT), vendored in `vendor/` so it works offline. Both the
   world and the cake fall back gracefully if WebGL is missing.
-- Props are placed with `surfaceY()` against the island's domed cap — the ground is a
-  curved surface, so anything placed at a flat height sinks into the terrain.
-- The island's fog and lighting are tuned to match the *scrimmed* photo behind the canvas.
-  The scrim darkens the photograph but not the WebGL layer, so matching them by eye is
-  the only way to stop the island reading as a pale cutout.
+- The island is `flatShading: true` throughout — that, plus deliberately *low* ambient
+  light, is what gives low-poly its facet contrast. Bright ambient washes it to pastel.
+- Signpost labels are laid out as a set each frame, not independently: the summit sits at
+  the island's centre, so anything directly behind it projects to nearly the same point
+  and the labels collide unless they're resolved together.
 - **Sound** is synthesized via Web Audio — no audio files. Starts muted.
 - **Mic** only measures loudness in the low-frequency band. Nothing is recorded or
   sent, and there's always a click-to-blow button if permission is denied.
@@ -67,14 +76,13 @@ Everything personal is in **`js/config.js`** — nothing else contains her name.
 ## Files
 
 ```
-index.html          the shell: photo backdrop, glass chrome
+index.html          the shell: sky layer, floating chrome
 styles.css          the whole design system
 js/config.js        ← the only file with anything personal in it
 js/core.js          missions, router, progress, sound, confetti
-js/world3d.js       the 3D island, waypoints, projection callbacks
+js/world3d.js       the low-poly island, waypoints, projection callbacks
 js/cake3d.js        the summit cake
 js/scenes/*.js      one file per mission
-img/                web-sized art + face-focused square crops (img/sq)
-img/bg/             16:9 background crops, framed so type lands on negative space
+img/sq/             face-focused square crops (memory tiles, range targets, portraits)
 docs/images/        the original images
 ```

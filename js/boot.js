@@ -29,7 +29,7 @@
 
   if (!Game.lit) setTimeout(() => Game.toast("tip: turn the sound on 🔊", 3000), 2600);
 
-  Game.go("hero");
+  Game.go("world");
 
   // DEV ONLY: Shift+N clears the current mission
   addEventListener("keydown", e => {

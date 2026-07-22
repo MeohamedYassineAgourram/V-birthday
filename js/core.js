@@ -3,15 +3,15 @@
 /* The five missions. `pos` is where the waypoint sits in the 3D world. */
 const STOPS = [
   { id: "chocobi",  cn: "拾遗", en: "GATHER", color: "#E3B341", photo: "room",  bg: "room",
-    pos: [-5.0, 1.0, 2.6], blurb: "Chocobi falls from the sky. Catch it." },
+    pos: [3.10, 0, 1.13], blurb: "Chocobi falls from the sky. Catch it." },
   { id: "memory",   cn: "解谜", en: "PUZZLE", color: "#7FA8C4", photo: "study", bg: "study",
-    pos: [5.2, 1.0, 2.2], blurb: "Shiro buried the album. Find the pairs." },
+    pos: [-1.13, 0, 3.10], blurb: "Shiro buried the album. Find the pairs." },
   { id: "valorant", cn: "战斗", en: "BATTLE", color: "#E8563F", photo: "hero",  bg: "night",
-    pos: [5.4, 1.6, -3.4], blurb: "The range awaits. Flick, don't spray." },
+    pos: [-3.10, 0, -1.13], blurb: "The range awaits. Flick, don't spray." },
   { id: "debugjs",  cn: "符文", en: "RUNES",  color: "#8FB07A", photo: "night", bg: "ramen",
-    pos: [-4.6, 2.2, -3.8], blurb: "Four runes, out of order. Restore them." },
+    pos: [1.13, 0, -3.10], blurb: "Four runes, out of order. Restore them." },
   { id: "cake",     cn: "心愿", en: "WISH",   color: "#D98E8E", photo: "field", bg: "hero",
-    pos: [0, 3.4, -1.2], blurb: "The summit. Make a wish." }
+    pos: [0, 0, 0], blurb: "The summit. Make a wish." }
 ];
 const FINALE = "cake";
 const TRIALS = STOPS.filter(s => s.id !== FINALE);   // the four that gate the summit
@@ -19,9 +19,9 @@ const TRIALS = STOPS.filter(s => s.id !== FINALE);   // the four that gate the s
 const Game = {
   stage:  document.getElementById("stage"),
   scenes: {},
-  order:  ["hero", "world", ...STOPS.map(s => s.id)],
+  order:  ["world", ...STOPS.map(s => s.id)],
   done:   new Set(),
-  current: "hero",
+  current: "world",
   _3d:    null,
   KEY:    "shin-bday-v3",
 
@@ -37,27 +37,58 @@ const Game = {
     if (this._3d) { this._3d.dispose(); this._3d = null; }
     this.current = name;
     this.save();
-    this.setBg(name);
+    this.setWorld(name);
     this.stage.innerHTML = "";
     this.renderChrome();
     this.scenes[name](this.stage);
     scrollTo({ top: 0, behavior: "smooth" });
   },
 
-  /* crossfade the full-bleed photograph between scenes */
-  _bgTop: false,
-  setBg(name) {
-    const stop = STOPS.find(s => s.id === name);
-    const img = name === "hero" ? "field" : name === "world" ? "sky" : (stop && stop.bg) || "sky";
-    const src = `url("img/bg/${img}.jpg")`;
-    const a = document.getElementById("bgA"), b = document.getElementById("bgB");
-    if (!a || !b) return;
-    const next = this._bgTop ? a : b, cur = this._bgTop ? b : a;
-    if (next.style.backgroundImage === src && cur.classList.contains("on")) return;
-    next.style.backgroundImage = src;
-    next.classList.add("on");
-    cur.classList.remove("on");
-    this._bgTop = !this._bgTop;
+  /* every scene is its own world: a flat sky colour and whatever drifts through it */
+  setWorld(name) {
+    document.body.dataset.world = STOPS.some(x => x.id === name) ? name : "map";
+    const amb = document.getElementById("ambient");
+    if (!amb) return;
+    amb.innerHTML = "";
+    const add = (cls, style) => amb.appendChild(el(`<span class="amb ${cls}" style="${style}"></span>`));
+    const rand = (a, b) => a + Math.random() * (b - a);
+
+    const weather = {
+      map:      "clouds", hero: "clouds",
+      chocobi:  "clouds",
+      memory:   "petals",
+      valorant: "stars",
+      debugjs:  "sparks",
+      cake:     "rays"
+    }[name] || "clouds";
+
+    if (weather === "clouds") {
+      for (let i = 0; i < 7; i++) {
+        const w = rand(90, 230), t = rand(4, 74), d = rand(48, 120), del = -rand(0, 120);
+        add("cloud", `width:${w}px;height:${w * .3}px;top:${t}vh;left:0;
+          animation-duration:${d}s;animation-delay:${del}s;opacity:${rand(.5, .95)}`);
+      }
+    }
+    if (weather === "petals") {
+      for (let i = 0; i < 26; i++)
+        add("petal", `left:${rand(0, 100)}vw;animation-duration:${rand(9, 20)}s;
+          animation-delay:${-rand(0, 20)}s;opacity:${rand(.35, .8)}`);
+    }
+    if (weather === "stars") {
+      for (let i = 0; i < 90; i++)
+        add("star", `left:${rand(0, 100)}vw;top:${rand(0, 92)}vh;
+          animation-duration:${rand(1.6, 5)}s;animation-delay:${-rand(0, 5)}s;
+          transform:scale(${rand(.6, 2.2)})`);
+    }
+    if (weather === "sparks") {
+      for (let i = 0; i < 28; i++)
+        add("spark", `left:${rand(0, 100)}vw;animation-duration:${rand(10, 24)}s;
+          animation-delay:${-rand(0, 24)}s`);
+    }
+    if (weather === "rays") {
+      for (let i = 0; i < 4; i++)
+        add("ray", `left:${rand(-6, 78)}vw;animation-delay:${-rand(0, 15)}s;opacity:${rand(.35, .75)}`);
+    }
   },
 
   save() {

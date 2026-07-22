@@ -5,23 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Happy Birthday</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎂</text></svg>">
-<link rel="preload" as="image" href="img/hero.jpg">
 <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body data-world="map">
 
-<!-- full-bleed photographic backdrop, crossfaded between scenes -->
-<div class="bg" aria-hidden="true">
-  <div class="bg-layer" id="bgA"></div>
-  <div class="bg-layer" id="bgB"></div>
-  <div class="bg-scrim"></div>
-</div>
+<!-- the sky: a flat colour wash plus whatever drifts through this particular world -->
+<div class="sky" aria-hidden="true"><div class="ambient" id="ambient"></div></div>
 
 <header class="chrome">
   <div class="mark" id="mark">Vivian<span>’s journey</span></div>
-
   <nav class="pillnav" id="pillnav"></nav>
-
   <div class="chrome-right">
     <button class="pill ghost" id="soundBtn" aria-label="toggle sound">🔇</button>
     <button class="pill solid" id="seals">0 / 5</button>
@@ -39,7 +32,6 @@
 <script src="js/core.js"></script>
 <script src="js/world3d.js"></script>
 <script src="js/cake3d.js"></script>
-<script src="js/scenes/hero.js"></script>
 <script src="js/scenes/world.js"></script>
 <script src="js/scenes/chocobi.js"></script>
 <script src="js/scenes/memory.js"></script>
