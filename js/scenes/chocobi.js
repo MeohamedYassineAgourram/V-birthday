@@ -1,4 +1,4 @@
-/* Stop 1 — Chocobi Rain. Catch the biscuits, dodge the green peppers. */
+/* Stop 3 — desert signal rain. Catch the route markers, dodge the glitches. */
 Game.games.chocobi = (stage, c) => {
   const target = CONFIG.chocobiTarget;
 
@@ -7,8 +7,8 @@ Game.games.chocobi = (stage, c) => {
       <div class="glyph" style="--c:#E3B341">拾</div>
       <div class="t">
         <div class="kicker" style="--c:${(c&&c.tint)||'#7FA8C4'}">${c?c.flag+' '+c.name:''} · Gather</div>
-        <h2>Chocobi Rain</h2>
-        <p>Catch <b>${target}</b> Chocobi. Green peppers are the enemy — Shin-chan has standards.</p>
+        <h2>Desert Signal Rain</h2>
+        <p>Catch <b>${target}</b> route markers. The green glitches interrupt the signal.</p>
       </div>
     </div>
     <div class="frame" id="frame">

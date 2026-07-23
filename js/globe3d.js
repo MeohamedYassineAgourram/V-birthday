@@ -34,6 +34,9 @@ const Globe3D = (() => {
     renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
     renderer.setSize(W0, H0, false);
     renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.08;
+    renderer.physicallyCorrectLights = true;
     container.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
@@ -110,14 +113,22 @@ const Globe3D = (() => {
     ro.observe(container);
 
     const clock = new THREE.Clock();
-    let raf, alive = true, zoom = 0;
+    let raf, alive = true, zoom = 0, focusAngle = null, focusUntil = 0;
     const tick = () => {
       if (!alive) return;
       raf = requestAnimationFrame(tick);
       const t = clock.getElapsedTime();
       m.x += (m.tx - m.x) * .05; m.y += (m.ty - m.y) * .05;
 
-      if (earth && !reduced) earth.rotation.y += .0016;
+      if (earth && !reduced) {
+        if (focusAngle !== null && performance.now() < focusUntil) {
+          let delta = (focusAngle - earth.rotation.y + Math.PI) % (Math.PI * 2) - Math.PI;
+          earth.rotation.y += delta * .045;
+        } else {
+          focusAngle = null;
+          earth.rotation.y += .0010; // approximately one complete orbit every 105 seconds at 60fps
+        }
+      }
       root.rotation.y = m.x * .25;
       root.rotation.x = -m.y * .12 + .05;
 
@@ -135,6 +146,11 @@ const Globe3D = (() => {
 
     return {
       zoomIn() { zoom = 1; },
+      focus(index) {
+        const angles = [2.15, 1.72, .34, -1.25, -2.22];
+        focusAngle = angles[index % angles.length];
+        focusUntil = performance.now() + 1500;
+      },
       dispose() {
         alive = false; cancelAnimationFrame(raf);
         removeEventListener("pointermove", onMove); ro.disconnect();

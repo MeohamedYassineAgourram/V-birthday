@@ -1,11 +1,11 @@
-/* Stop 3 — debug.js. The CS-student wink: reorder the lines so the program runs. */
+/* Stop 4 — debug.js. The CS-student wink: reorder the route so it compiles. */
 Game.games.debugjs = (stage, c) => {
 
   const LINES = [
-    { id: "declare", src: `  const parts = [];`,                      op: st => { st.declared = true; } },
-    { id: "push1",   src: `  parts.push("生日快乐");`,                 op: st => st.push("生日快乐") },
-    { id: "push2",   src: `  parts.push(\`\${name}!\`);`,              op: st => st.push(`${CONFIG.name}!`) },
-    { id: "log",     src: `  console.log(parts.join(", ") + " 🎂");`, op: st => st.log() }
+    { id: "declare", src: `  const route = [];`,                        op: st => { st.declared = true; } },
+    { id: "push1",   src: `  route.push("Paris");`,                     op: st => st.push("Paris") },
+    { id: "push2",   src: `  route.push(\`\${name}\`);`,                op: st => st.push(CONFIG.name) },
+    { id: "log",     src: `  console.log(route.join(" → ") + " ✦");`,  op: st => st.log() }
   ];
   const SOLUTION = ["declare", "push1", "push2", "log"];
 
@@ -13,13 +13,13 @@ Game.games.debugjs = (stage, c) => {
     const st = {
       declared: false, arr: [], out: null, err: null,
       push(v) {
-        if (!this.declared) { this.err = "ReferenceError: Cannot access 'parts' before initialization"; return; }
+        if (!this.declared) { this.err = "ReferenceError: Cannot access 'route' before initialization"; return; }
         this.arr.push(v);
       },
       log() {
         if (this.err) return;
-        if (!this.declared) { this.err = "ReferenceError: parts is not defined"; return; }
-        if (this.out === null) this.out = this.arr.join(", ") + " 🎂";
+        if (!this.declared) { this.err = "ReferenceError: route is not defined"; return; }
+        if (this.out === null) this.out = this.arr.join(" → ") + " ✦";
       }
     };
     for (const id of order) { LINES.find(l => l.id === id).op(st); if (st.err) break; }
@@ -35,15 +35,15 @@ Game.games.debugjs = (stage, c) => {
       <div class="glyph" style="--c:#8FB07A">符</div>
       <div class="t">
         <div class="kicker" style="--c:${(c&&c.tint)||'#7FA8C4'}">${c?c.flag+' '+c.name:''} · Runes</div>
-        <h2>The Scrambled Runes</h2>
-        <p>Four runes, out of order. Click two to swap them until the incantation runs.</p>
+        <h2>Route Compiler</h2>
+        <p>Four lines, out of order. Click two to swap them until the path compiles.</p>
       </div>
     </div>
     <div class="code">
-      <div class="dim">function birthday(name) {</div>
+      <div class="dim">function unlockRoute(name) {</div>
       <div id="lines"></div>
       <div class="dim">}</div>
-      <div class="dim">birthday(<span class="str">"${CONFIG.name}"</span>);</div>
+      <div class="dim">unlockRoute(<span class="str">"${CONFIG.name}"</span>);</div>
     </div>
     <div class="out" id="out">&gt; _</div>
     <p class="muted" id="hint" style="margin-top:10px;min-height:20px"></p>

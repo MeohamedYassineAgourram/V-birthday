@@ -3,19 +3,19 @@
 /* The five stops of the journey, in order. Each is a country + a mission. */
 const COUNTRIES = [
   { id: "japan",   name: "Japan",       city: "Mt. Fuji · Kawaguchiko", flag: "🇯🇵",
-    game: "memory",   tint: "#E8709E", stamp: "日本",
-    brief: "Petals hide the memories. Match every pair beneath Mt. Fuji." },
+    game: "memory",   tint: "#E8709E", stamp: "日本", code: "MEMORY//01",
+    brief: "Petals hide the route fragments. Reconnect every pair beneath Mt. Fuji." },
   { id: "korea",   name: "South Korea", city: "Seoul",                  flag: "🇰🇷",
-    game: "valorant", tint: "#5B8DEF", stamp: "한국",
-    brief: "Seoul's arena is live. Flick onto every target — headshots count double." },
+    game: "valorant", tint: "#5B8DEF", stamp: "한국", code: "RANGE//02",
+    brief: "Seoul's arena is live. Calibrate every target — precision gets you through." },
   { id: "morocco", name: "Morocco",     city: "The Sahara",            flag: "🇲🇦",
-    game: "chocobi",  tint: "#E0A34B", stamp: "المغرب",
-    brief: "Stars fall over the dunes. Catch them, dodge the thorns." },
+    game: "chocobi",  tint: "#E0A34B", stamp: "المغرب", code: "ORBIT//03",
+    brief: "Signals fall over the dunes. Catch the good ones and dodge the glitches." },
   { id: "china",   name: "China",       city: "Shanghai",              flag: "🇨🇳",
-    game: "debugjs",  tint: "#E0483B", stamp: "中国",
-    brief: "Four runes glow out of order. Restore the incantation." },
+    game: "debugjs",  tint: "#E0483B", stamp: "中国", code: "CODE//04",
+    brief: "Four route fragments are out of order. Compile the way forward." },
   { id: "france",  name: "France",      city: "Paris",                 flag: "🇫🇷",
-    game: "cake",     tint: "#8E7BF0", stamp: "Paris", finale: true,
+    game: "cake",     tint: "#8E7BF0", stamp: "Paris", finale: true, code: "FINAL//05",
     brief: "The journey's end. One last wish under the Eiffel lights." }
 ];
 const byId = id => COUNTRIES.find(c => c.id === id);
@@ -28,6 +28,7 @@ const Game = {
   done:    new Set(),
   current: "globe",
   active:  null,       // the country whose mission is running
+  traveling: false,
   _3d:     null,
   KEY:     "vivi-journey-v1",
 
@@ -44,6 +45,7 @@ const Game = {
   go(name) {
     if (this._3d) { this._3d.dispose(); this._3d = null; }
     this.current = name;
+    this.traveling = false;
     this.active = byId(name) || null;
     this.save();
     this.setWorld(name);
@@ -55,10 +57,13 @@ const Game = {
 
   /* a cinematic zoom-wipe between scenes, tinted by the destination country */
   travel(name) {
+    if (this.traveling) return;
+    this.traveling = true;
     const c = byId(name);
     const ov = document.getElementById("warp");
-    if (!ov) return this.go(name);
-    ov.style.setProperty("--img", c ? `url("img/loc/${c.id}.jpg")` : "none");
+    if (!ov) { this.go(name); return; }
+    const nextImage = c ? `url("img/loc/${c.id}.jpg")` : `url("img/loc/japan_card.jpg")`;
+    ov.style.setProperty("--img", nextImage);
     ov.style.setProperty("--tint", c ? c.tint : "#0a0e17");
     ov.classList.remove("out"); ov.classList.add("in");
     this.sfx("whoosh");

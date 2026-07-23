@@ -1,5 +1,4 @@
-/* Stop 3 — THE RANGE. Because she plays Valorant.
-   Flick onto the Shin-chans. Headshots are the top third. */
+/* Stop 2 — THE RANGE. A Valorant-inspired precision calibration. */
 Game.games.valorant = (stage, c) => {
   const TARGET = CONFIG.rangeTargets || 15;
   const FACES = ["hero", "ramen", "night", "study", "room", "field"];
@@ -9,7 +8,7 @@ Game.games.valorant = (stage, c) => {
       <div class="glyph" style="--c:#E8563F">战</div>
       <div class="t">
         <div class="kicker" style="--c:${(c&&c.tint)||'#7FA8C4'}">${c?c.flag+' '+c.name:''} · The Range</div>
-        <h2>Flick on the Shin-chans</h2>
+        <h2>Precision calibration</h2>
         <p style="margin-top:4px">
           ${TARGET} kills to clear. The top third of the head counts as a headshot 🎯
         </p>

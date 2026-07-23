@@ -5,18 +5,19 @@
 const CONFIG = {
 
   // --- who ---
-  name:        "Vivian",
+  name:        "Viviane",
   chineseName: "",        // optional — shown on the title card. "" hides it.
 
   // --- the letter at the very end. Each string is its own paragraph. ---
   letter: [
-    "Happy Birthday, Vivian!",
-    "生日快乐！"
+    "Happy Birthday, Viviane!",
+    "You followed the route across five worlds, solved every mission, and made it all the way to Paris. I hope this new chapter brings you brilliant ideas, gentle adventures, and lots of reasons to smile.",
+    "生日快乐！愿新的一年里，每一天都闪闪发光。"
   ],
-  letterSignoff: "— ___YOUR_NAME___",   // <- the only thing left to fill in
+  letterSignoff: "— Your co-pilot",
 
   // --- tuning ---
-  chocobiTarget: 12,     // Chocobi to catch in stop 1
+  chocobiTarget: 12,     // route markers to catch in the desert
   rangeTargets:  15,     // kills needed in The Range
   spikeSeconds:  45,     // countdown on the spike
   defuseSeconds: 7,      // how long defusing takes (half-defuse at the midpoint)

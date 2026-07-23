@@ -32,7 +32,7 @@ const DRAW = {
     ctx.restore();
   },
 
-  /* Shin-chan's snack basket */
+  /* The desert signal receiver */
   basket(ctx, x, y, w, h) {
     ctx.save();
     ctx.shadowColor = "rgba(17,18,20,.3)"; ctx.shadowBlur = 14; ctx.shadowOffsetY = 6;

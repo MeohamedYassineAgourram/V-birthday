@@ -30,10 +30,10 @@ python3 -m http.server 8777   # open http://localhost:8777
 Classic scripts loaded via an ES-module bootstrap (three.js + GLTFLoader are modules);
 no build step.
 
-## Fill in the personal bits
+## Personalize the finale
 
-Everything personal is in **`js/config.js`** — `name`, the `letter[]`, and `letterSignoff`
-(the one placeholder left: `— ___YOUR_NAME___`).
+Everything personal is in **`js/config.js`** — `name`, the `letter[]`, and `letterSignoff`.
+Viviane's name and a warm bilingual ending are already included; change the signoff to your name before you send it.
 
 ## Notes
 

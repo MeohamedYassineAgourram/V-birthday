@@ -8,8 +8,8 @@ Game.games.memory = (stage, c) => {
       <div class="glyph" style="--c:#7FA8C4">谜</div>
       <div class="t">
         <div class="kicker" style="--c:${(c&&c.tint)||'#7FA8C4'}">${c?c.flag+' '+c.name:''} · Puzzle</div>
-        <h2>Shiro's Lost Photos</h2>
-        <p>He buried the whole album in the garden again. Find all six pairs.</p>
+        <h2>Petal Archive</h2>
+        <p>The route fragments are scattered beneath the blossoms. Find all six pairs.</p>
       </div>
     </div>
     <div class="grid" id="grid"></div>

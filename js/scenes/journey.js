@@ -7,7 +7,7 @@ Game.scenes.journey = (stage) => {
   const view = el(`<section class="journey enter">
     <div class="j-head">
       <div class="eyebrow"><span class="dot-live"></span> The journey · ${Game.lit} of ${COUNTRIES.length} cleared</div>
-      <h1 class="j-title">Pick up where the map leaves off</h1>
+      <h1 class="j-title">The route is yours to unlock</h1>
     </div>
 
     <div class="deck" id="deck"></div>
@@ -31,7 +31,7 @@ Game.scenes.journey = (stage) => {
       <div class="dcard-glass">
         <div class="dcard-top">
           <span class="dcard-flag">${c.flag}</span>
-          <span class="dcard-step">Stop ${idx} / ${COUNTRIES.length}</span>
+          <span class="dcard-step">${c.code} · stop ${idx} / ${COUNTRIES.length}</span>
           ${done ? `<span class="dcard-check">✓ cleared</span>`
                  : open ? "" : `<span class="dcard-lock">🔒 locked</span>`}
         </div>
