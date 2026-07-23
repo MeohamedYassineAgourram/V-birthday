@@ -1,12 +1,12 @@
 /* Stop 1 — Chocobi Rain. Catch the biscuits, dodge the green peppers. */
-Game.scenes.chocobi = (stage) => {
+Game.games.chocobi = (stage, c) => {
   const target = CONFIG.chocobiTarget;
 
-  const card = el(`<section class="panel enter">
+  const card = el(`<section class="glass enter">
     <div class="head">
       <div class="glyph" style="--c:#E3B341">拾</div>
       <div class="t">
-        <div class="kicker" style="--c:#E3B341">Trial · Gather</div>
+        <div class="kicker" style="--c:${(c&&c.tint)||'#7FA8C4'}">${c?c.flag+' '+c.name:''} · Gather</div>
         <h2>Chocobi Rain</h2>
         <p>Catch <b>${target}</b> Chocobi. Green peppers are the enemy — Shin-chan has standards.</p>
       </div>
@@ -86,7 +86,7 @@ Game.scenes.chocobi = (stage) => {
           Game.toast("BLEH! 🥬 not a snack", 1100);
         } else { Game.sfx("good"); caught++; }
         scoreEl.textContent = `${caught} / ${target}`;
-        if (caught >= target) { stop(); setTimeout(() => Game.win("chocobi"), 300); }
+        if (caught >= target) { stop(); setTimeout(() => Game.win(), 300); }
       }
       if (oy > H + 40) o.dead = true;
     });

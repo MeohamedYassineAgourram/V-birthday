@@ -1,8 +1,6 @@
-/* Startup: wordmark, sound, resume, dev shortcuts. */
+/* Startup: sound, resume, dev shortcuts. Start on the globe. */
 (() => {
-  document.title = `Happy Birthday, ${CONFIG.name}`;
-  const mark = document.getElementById("mark");
-  if (mark) mark.innerHTML = `${CONFIG.name}<span>’s journey</span>`;
+  document.title = "Do you accept the challenge?";
 
   const btn = document.getElementById("soundBtn");
   btn.onclick = () => {
@@ -11,10 +9,13 @@
     if (!Game.muted) { Game.audio(); Game.sfx("good"); }
   };
 
-  // DEV ONLY: ?dev=valorant jumps straight to a mission
+  // DEV ONLY: ?dev=japan jumps straight to a scene
   const dev = new URLSearchParams(location.search).get("dev");
   if (dev && Game.order.includes(dev)) {
-    if (dev === "cake") STOPS.forEach(s => s.id !== "cake" && Game.done.add(s.id));
+    // unlock everything up to the requested country for testing
+    const i = COUNTRIES.findIndex(c => c.id === dev);
+    if (i > 0) COUNTRIES.slice(0, i).forEach(c => Game.done.add(c.id));
+    if (dev === "france") COUNTRIES.slice(0, 4).forEach(c => Game.done.add(c.id));
     return Game.go(dev);
   }
 
@@ -22,19 +23,15 @@
   try {
     const saved = JSON.parse(localStorage.getItem(Game.KEY) || "null");
     if (saved && Array.isArray(saved.done)) {
-      saved.done.forEach(id => STOPS.some(s => s.id === id) && Game.done.add(id));
-      if (Game.lit) setTimeout(() => Game.toast(`${Game.lit} of ${STOPS.length} seals recovered ✦`, 2600), 1200);
+      saved.done.forEach(id => byId(id) && Game.done.add(id));
     }
   } catch (e) {}
 
-  if (!Game.lit) setTimeout(() => Game.toast("tip: turn the sound on 🔊", 3000), 2600);
-
-  Game.go("world");
+  // returning visitors with progress land on the journey board; first-timers see the globe
+  Game.go(Game.lit > 0 && Game.lit < COUNTRIES.length ? "journey" : "globe");
 
   // DEV ONLY: Shift+N clears the current mission
   addEventListener("keydown", e => {
-    if (e.shiftKey && e.key.toLowerCase() === "n" && STOPS.some(s => s.id === Game.current)) {
-      Game.win(Game.current);
-    }
+    if (e.shiftKey && e.key.toLowerCase() === "n" && Game.active) Game.win();
   });
 })();

@@ -1,156 +1,143 @@
-/* Router, progress, sound, confetti. No dependencies. */
+/* Router, progress, sound, confetti — a journey around the world. No dependencies. */
 
-/* The five missions. `pos` is where the waypoint sits in the 3D world. */
-const STOPS = [
-  { id: "chocobi",  cn: "拾遗", en: "GATHER", color: "#E3B341", photo: "room",  bg: "room",
-    pos: [3.10, 0, 1.13], blurb: "Chocobi falls from the sky. Catch it." },
-  { id: "memory",   cn: "解谜", en: "PUZZLE", color: "#7FA8C4", photo: "study", bg: "study",
-    pos: [-1.13, 0, 3.10], blurb: "Shiro buried the album. Find the pairs." },
-  { id: "valorant", cn: "战斗", en: "BATTLE", color: "#E8563F", photo: "hero",  bg: "night",
-    pos: [-3.10, 0, -1.13], blurb: "The range awaits. Flick, don't spray." },
-  { id: "debugjs",  cn: "符文", en: "RUNES",  color: "#8FB07A", photo: "night", bg: "ramen",
-    pos: [1.13, 0, -3.10], blurb: "Four runes, out of order. Restore them." },
-  { id: "cake",     cn: "心愿", en: "WISH",   color: "#D98E8E", photo: "field", bg: "hero",
-    pos: [0, 0, 0], blurb: "The summit. Make a wish." }
+/* The five stops of the journey, in order. Each is a country + a mission. */
+const COUNTRIES = [
+  { id: "japan",   name: "Japan",       city: "Mt. Fuji · Kawaguchiko", flag: "🇯🇵",
+    game: "memory",   tint: "#E8709E", stamp: "日本",
+    brief: "Petals hide the memories. Match every pair beneath Mt. Fuji." },
+  { id: "korea",   name: "South Korea", city: "Seoul",                  flag: "🇰🇷",
+    game: "valorant", tint: "#5B8DEF", stamp: "한국",
+    brief: "Seoul's arena is live. Flick onto every target — headshots count double." },
+  { id: "morocco", name: "Morocco",     city: "The Sahara",            flag: "🇲🇦",
+    game: "chocobi",  tint: "#E0A34B", stamp: "المغرب",
+    brief: "Stars fall over the dunes. Catch them, dodge the thorns." },
+  { id: "china",   name: "China",       city: "Shanghai",              flag: "🇨🇳",
+    game: "debugjs",  tint: "#E0483B", stamp: "中国",
+    brief: "Four runes glow out of order. Restore the incantation." },
+  { id: "france",  name: "France",      city: "Paris",                 flag: "🇫🇷",
+    game: "cake",     tint: "#8E7BF0", stamp: "Paris", finale: true,
+    brief: "The journey's end. One last wish under the Eiffel lights." }
 ];
-const FINALE = "cake";
-const TRIALS = STOPS.filter(s => s.id !== FINALE);   // the four that gate the summit
+const byId = id => COUNTRIES.find(c => c.id === id);
 
 const Game = {
-  stage:  document.getElementById("stage"),
-  scenes: {},
-  order:  ["world", ...STOPS.map(s => s.id)],
-  done:   new Set(),
-  current: "world",
-  _3d:    null,
-  KEY:    "shin-bday-v3",
+  stage:   document.getElementById("stage"),
+  scenes:  {},         // globe, journey, and one wrapper per country
+  games:   {},         // the minigame builders, keyed by game type
+  order:   ["globe", "journey", ...COUNTRIES.map(c => c.id)],
+  done:    new Set(),
+  current: "globe",
+  active:  null,       // the country whose mission is running
+  _3d:     null,
+  KEY:     "vivi-journey-v1",
 
   get lit() { return this.done.size; },
 
-  /* the summit only opens once the four trials are done */
+  /* a country unlocks once every earlier country is done (linear journey) */
   unlocked(id) {
-    return id !== FINALE || TRIALS.every(s => this.done.has(s.id));
+    const i = COUNTRIES.findIndex(c => c.id === id);
+    return COUNTRIES.slice(0, i).every(c => this.done.has(c.id));
   },
+  nextCountry() { return COUNTRIES.find(c => !this.done.has(c.id)); },
 
   /* ---------- routing ---------- */
   go(name) {
     if (this._3d) { this._3d.dispose(); this._3d = null; }
     this.current = name;
+    this.active = byId(name) || null;
     this.save();
     this.setWorld(name);
     this.stage.innerHTML = "";
     this.renderChrome();
-    this.scenes[name](this.stage);
-    scrollTo({ top: 0, behavior: "smooth" });
+    (this.scenes[name] || this.scenes.globe)(this.stage);
+    scrollTo({ top: 0 });
   },
 
-  /* every scene is its own world: a flat sky colour and whatever drifts through it */
-  _sky: null,
+  /* a cinematic zoom-wipe between scenes, tinted by the destination country */
+  travel(name) {
+    const c = byId(name);
+    const ov = document.getElementById("warp");
+    if (!ov) return this.go(name);
+    ov.style.setProperty("--img", c ? `url("img/loc/${c.id}.jpg")` : "none");
+    ov.style.setProperty("--tint", c ? c.tint : "#0a0e17");
+    ov.classList.remove("out"); ov.classList.add("in");
+    this.sfx("whoosh");
+    setTimeout(() => {
+      this.go(name);
+      ov.classList.remove("in"); ov.classList.add("out");
+      setTimeout(() => ov.classList.remove("out"), 700);
+    }, 620);
+  },
+
+  /* ---------- world theming (per-country backdrop) ---------- */
   setWorld(name) {
-    document.body.dataset.world = STOPS.some(x => x.id === name) ? name : "map";
-    const amb = document.getElementById("ambient");
-    if (!amb) return;
-    amb.innerHTML = "";
-
-    // the landing is clean and minimal — no weather at all; the island's own
-    // orbit ring and floating accents carry it. Missions keep their weather.
-    if (this._sky) { this._sky.dispose(); this._sky = null; }
-    if (!STOPS.some(x => x.id === name)) return;       // map / hero: nothing drifting
-
-    const add = (cls, style) => amb.appendChild(el(`<span class="amb ${cls}" style="${style}"></span>`));
-    const rand = (a, b) => a + Math.random() * (b - a);
-
-    const weather = {
-      map:      "clouds", hero: "clouds",
-      chocobi:  "clouds",
-      memory:   "petals",
-      valorant: "stars",
-      debugjs:  "sparks",
-      cake:     "rays"
-    }[name] || "clouds";
-
-    if (weather === "clouds") {
-      for (let i = 0; i < 7; i++) {
-        const w = rand(90, 230), t = rand(4, 74), d = rand(48, 120), del = -rand(0, 120);
-        add("cloud", `width:${w}px;height:${w * .3}px;top:${t}vh;left:0;
-          animation-duration:${d}s;animation-delay:${del}s;opacity:${rand(.5, .95)}`);
-      }
+    const c = byId(name);
+    document.body.dataset.world = name;
+    const bd = document.getElementById("backdrop");
+    if (bd) {
+      bd.style.backgroundImage = c ? `url("img/loc/${c.id}.jpg")` : "none";
+      bd.classList.toggle("on", !!c);
     }
-    if (weather === "petals") {
-      for (let i = 0; i < 26; i++)
-        add("petal", `left:${rand(0, 100)}vw;animation-duration:${rand(9, 20)}s;
-          animation-delay:${-rand(0, 20)}s;opacity:${rand(.35, .8)}`);
-    }
-    if (weather === "stars") {
-      for (let i = 0; i < 90; i++)
-        add("star", `left:${rand(0, 100)}vw;top:${rand(0, 92)}vh;
-          animation-duration:${rand(1.6, 5)}s;animation-delay:${-rand(0, 5)}s;
-          transform:scale(${rand(.6, 2.2)})`);
-    }
-    if (weather === "sparks") {
-      for (let i = 0; i < 28; i++)
-        add("spark", `left:${rand(0, 100)}vw;animation-duration:${rand(10, 24)}s;
-          animation-delay:${-rand(0, 24)}s`);
-    }
-    if (weather === "rays") {
-      for (let i = 0; i < 4; i++)
-        add("ray", `left:${rand(-6, 78)}vw;animation-delay:${-rand(0, 15)}s;opacity:${rand(.35, .75)}`);
-    }
+    document.documentElement.style.setProperty("--tint", c ? c.tint : "#5B8DEF");
   },
 
   save() {
-    try {
-      localStorage.setItem(this.KEY, JSON.stringify({ scene: this.current, done: [...this.done] }));
-    } catch (e) {}
+    try { localStorage.setItem(this.KEY, JSON.stringify({ scene: this.current, done: [...this.done] })); }
+    catch (e) {}
   },
 
-  /* Mission complete → a seal is earned, then back to the map. */
-  win(id) {
-    const stop = STOPS.find(s => s.id === id);
-    const wasNew = !this.done.has(id);
-    this.done.add(id);
+  /* A mission is cleared → stamp the passport, then continue the journey. */
+  win() {
+    const c = this.active;
+    if (!c) return;
+    const wasNew = !this.done.has(c.id);
+    this.done.add(c.id);
     this.save();
     this.sfx("win");
-    this.burst(70);
+    this.burst(80);
     this.renderChrome();
 
-    const allDone = TRIALS.every(s => this.done.has(s.id));
-    const card = el(`<div class="panel narrow center enter">
-      <div class="win-seal" style="--c:${stop.color}">${stop.cn}</div>
-      <div class="kicker" style="--c:${stop.color}">${stop.en} complete</div>
-      <h2>${wasNew ? "A seal is yours" : "Cleared again"}</h2>
-      <p class="lead">${this.lit} of ${STOPS.length} seals recovered.${
-        allDone && !this.done.has(FINALE) ? " <b>The summit has opened.</b>" : ""}</p>
+    if (c.finale) return;   // France runs its own finale (birthday reveal)
+
+    const next = this.nextCountry();
+    const card = el(`<div class="glass narrow center enter">
+      <div class="stamp" style="--c:${c.tint}">${c.flag}<span>${c.stamp}</span></div>
+      <div class="kicker">${c.name} · cleared</div>
+      <h2>${wasNew ? "Passport stamped" : "Cleared again"}</h2>
+      <p class="lead">${this.lit} of ${COUNTRIES.length} stops complete.
+        ${next ? `Next: <b>${next.flag} ${next.name}</b>.` : ""}</p>
       <div class="cta-row">
-        <button class="btn solid" id="back">Return to the map</button>
+        ${next ? `<button class="btn solid" id="nx">Fly to ${next.name} <span>→</span></button>` : ""}
+        <button class="btn ghost" id="board">The journey</button>
       </div>
     </div>`);
     this.stage.innerHTML = "";
     this.stage.appendChild(card);
-    card.querySelector("#back").onclick = () => this.go("world");
+    const nxBtn = card.querySelector("#nx");
+    if (nxBtn) nxBtn.onclick = () => this.travel(next.id);
+    card.querySelector("#board").onclick = () => this.go("journey");
   },
 
-  /* ---------- floating chrome ---------- */
+  /* ---------- floating chrome: the passport strip ---------- */
   renderChrome() {
+    const onJourney = this.current !== "globe";
+    document.querySelector(".chrome").classList.toggle("hidden", !onJourney);
+
     const nav = document.getElementById("pillnav");
     if (nav) {
       nav.innerHTML = "";
-      const map = el(`<button class="${this.current === "world" ? "on" : ""}">Map</button>`);
-      map.onclick = () => this.go("world");
-      nav.appendChild(map);
-      STOPS.forEach(s => {
-        const open = this.unlocked(s.id);
-        const b = el(`<button class="${s.id === this.current ? "on" : ""} ${this.done.has(s.id) ? "done" : ""}"
-          ${open ? "" : "disabled"}>${s.en.charAt(0) + s.en.slice(1).toLowerCase()}</button>`);
-        b.onclick = () => open && this.go(s.id);
+      COUNTRIES.forEach(c => {
+        const done = this.done.has(c.id), open = this.unlocked(c.id), on = c.id === this.current;
+        const b = el(`<button class="flag ${done ? "done" : ""} ${on ? "on" : ""}"
+          ${open ? "" : "disabled"} title="${c.name}">${c.flag}</button>`);
+        b.onclick = () => open && (c.id === this.current ? null : this.travel(c.id));
         nav.appendChild(b);
       });
     }
     const seals = document.getElementById("seals");
-    if (seals) {
-      seals.textContent = `${this.lit} / ${STOPS.length}`;
-      seals.onclick = () => this.go(this.current === "hero" ? "world" : "hero");
-    }
+    if (seals) { seals.textContent = `${this.lit} / ${COUNTRIES.length}`; seals.onclick = () => this.go("journey"); }
+    const mark = document.getElementById("mark");
+    if (mark) mark.onclick = () => this.go("journey");
   },
 
   /* ---------- toast ---------- */
@@ -189,6 +176,7 @@ const Game = {
     if (kind === "shot") { this.tone(240, .05, "square", .07); this.tone(90, .09, "sawtooth", .06, .01); }
     if (kind === "hit")  { this.tone(1400, .05, "sine", .1); this.tone(2100, .06, "sine", .08, .04); }
     if (kind === "win")  [523, 659, 784, 1046].forEach((f, i) => this.tone(f, .2, "triangle", .12, i * .09));
+    if (kind === "whoosh") { this.tone(180, .5, "sine", .07); this.tone(90, .6, "sine", .05, .05); }
   },
   melody() {
     if (this.muted) return;
@@ -246,3 +234,13 @@ function el(html) {
 }
 const shuffle = a => a.map(v => [Math.random(), v]).sort((x, y) => x[0] - y[0]).map(p => p[1]);
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+
+/* Each country scene = its backdrop (set in setWorld) + the minigame on top.
+   Games are registered later by the scene files; read them lazily at call time. */
+COUNTRIES.forEach(c => {
+  Game.scenes[c.id] = (stage) => {
+    Game.active = c;
+    const build = Game.games[c.game];
+    if (build) build(stage, c);
+  };
+});

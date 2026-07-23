@@ -1,13 +1,13 @@
 /* Stop 2 — Shiro buried the photos. Match the pairs. Mismatches cost nothing. */
-Game.scenes.memory = (stage) => {
+Game.games.memory = (stage, c) => {
   const FACES = ["hero", "field", "night", "room", "study", "ramen"];
   const deck = shuffle([...FACES, ...FACES]);
 
-  const card = el(`<section class="panel enter" style="max-width:620px">
+  const card = el(`<section class="glass enter" style="max-width:620px">
     <div class="head">
       <div class="glyph" style="--c:#7FA8C4">谜</div>
       <div class="t">
-        <div class="kicker" style="--c:#7FA8C4">Trial · Puzzle</div>
+        <div class="kicker" style="--c:${(c&&c.tint)||'#7FA8C4'}">${c?c.flag+' '+c.name:''} · Puzzle</div>
         <h2>Shiro's Lost Photos</h2>
         <p>He buried the whole album in the garden again. Find all six pairs.</p>
       </div>
@@ -50,7 +50,7 @@ Game.scenes.memory = (stage) => {
           open = []; lock = false; done++;
           card.querySelector("#pairs").textContent = done;
           Game.sfx("good");
-          if (done === FACES.length) setTimeout(() => Game.win("memory"), 420);
+          if (done === FACES.length) setTimeout(() => Game.win(), 420);
         }, 300);
       } else {
         setTimeout(() => {

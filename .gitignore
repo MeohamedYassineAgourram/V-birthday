@@ -1,5 +1,7 @@
 .DS_Store
 **/.DS_Store
-
-# source model — optimized copy lives in models/island.glb
+# source assets — runtime uses the optimized/processed copies in models/ and img/
 stylized_3d_floating_island_and_mine_house.glb
+items/
+inspi/
+docs/

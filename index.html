@@ -3,17 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Happy Birthday</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎂</text></svg>">
+<title>The Challenge</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌍</text></svg>">
 <link rel="stylesheet" href="styles.css">
 </head>
-<body data-world="map">
+<body data-world="globe">
 
-<!-- the sky: a flat colour wash plus whatever drifts through this particular world -->
-<div class="sky" aria-hidden="true"><div class="ambient" id="ambient"></div></div>
+<!-- full-bleed per-country backdrop, behind everything -->
+<div class="sky" aria-hidden="true">
+  <div class="stars"></div>
+  <div class="backdrop" id="backdrop"></div>
+  <div class="backdrop-scrim"></div>
+  <div class="ambient" id="ambient"></div>
+</div>
 
-<header class="chrome">
-  <div class="mark" id="mark">Vivian<span>’s journey</span></div>
+<header class="chrome hidden">
+  <div class="mark" id="mark">The Journey</div>
   <nav class="pillnav" id="pillnav"></nav>
   <div class="chrome-right">
     <button class="pill ghost" id="soundBtn" aria-label="toggle sound">🔇</button>
@@ -23,11 +28,12 @@
 
 <main id="stage" class="stage"></main>
 
+<!-- cinematic zoom-wipe between scenes -->
+<div class="warp" id="warp" aria-hidden="true"></div>
+
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <canvas class="confetti-layer" id="confetti"></canvas>
 
-<!-- three.js and the GLTF loader are ES modules; expose them as globals, then
-     load the rest of the app (classic scripts that read window.THREE) in order. -->
 <script type="importmap">
 { "imports": { "three": "./vendor/three.module.js" } }
 </script>
@@ -38,9 +44,10 @@
   window.GLTFLoader = GLTFLoader;
 
   const files = [
-    "js/config.js", "js/art.js", "js/core.js", "js/world3d.js", "js/cake3d.js",
-    "js/scenes/world.js", "js/scenes/chocobi.js", "js/scenes/memory.js",
-    "js/scenes/debugjs.js", "js/scenes/valorant.js", "js/scenes/cake.js", "js/boot.js"
+    "js/config.js", "js/art.js", "js/core.js", "js/globe3d.js", "js/cake3d.js",
+    "js/scenes/globe.js", "js/scenes/journey.js",
+    "js/scenes/chocobi.js", "js/scenes/memory.js", "js/scenes/debugjs.js",
+    "js/scenes/valorant.js", "js/scenes/cake.js", "js/boot.js"
   ];
   for (const src of files) {
     await new Promise((res, rej) => {

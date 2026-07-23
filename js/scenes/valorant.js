@@ -1,14 +1,14 @@
 /* Stop 3 — THE RANGE. Because she plays Valorant.
    Flick onto the Shin-chans. Headshots are the top third. */
-Game.scenes.valorant = (stage) => {
+Game.games.valorant = (stage, c) => {
   const TARGET = CONFIG.rangeTargets || 15;
   const FACES = ["hero", "ramen", "night", "study", "room", "field"];
 
-  const wrap = el(`<section class="panel dim enter">
+  const wrap = el(`<section class="glass dim enter">
     <div class="head" style="margin-bottom:14px">
       <div class="glyph" style="--c:#E8563F">战</div>
       <div class="t">
-        <div class="kicker" style="--c:#E8563F">Trial · Battle · The Range</div>
+        <div class="kicker" style="--c:${(c&&c.tint)||'#7FA8C4'}">${c?c.flag+' '+c.name:''} · The Range</div>
         <h2>Flick on the Shin-chans</h2>
         <p style="margin-top:4px">
           ${TARGET} kills to clear. The top third of the head counts as a headshot 🎯
@@ -102,7 +102,7 @@ Game.scenes.valorant = (stage) => {
     Game.burst(80);
     setTimeout(() => {
       Game.toast(`${acc}% accuracy · ${heads} headshots · ${best} streak 🔥`, 2600);
-      Game.win("valorant");
+      Game.win();
     }, 1300);
   };
 

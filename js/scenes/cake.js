@@ -1,14 +1,14 @@
-/* The summit — 心愿 WISH. Blow out the candles, then the letter. */
-Game.scenes.cake = (stage) => {
-  const N = STOPS.length;
+/* France · Paris — the finale. Blow out the candles, then the reveal. */
+Game.games.cake = (stage) => {
+  const N = 5;
 
-  const card = el(`<section class="panel center enter">
+  const card = el(`<section class="glass center enter">
     <div class="head" style="text-align:left">
-      <div class="glyph" style="--c:#D98E8E">愿</div>
+      <div class="glyph" style="--c:#8E7BF0">🎂</div>
       <div class="t">
-        <div class="kicker" style="--c:#D98E8E">The Summit · Wish</div>
-        <h2>Make a wish</h2>
-        <p id="prompt">${N} candles, one for every seal. Blow into your microphone to put them out.</p>
+        <div class="kicker" style="--c:#8E7BF0">Paris · the journey's end</div>
+        <h2>You made it all the way here</h2>
+        <p id="prompt">Five candles for five countries. Blow into your microphone to put them out.</p>
       </div>
     </div>
 
@@ -59,7 +59,7 @@ Game.scenes.cake = (stage) => {
     finished = true;
     cancelAnimationFrame(raf);
     if (stream) stream.getTracks().forEach(t => t.stop());
-    Game.done.add("cake");
+    Game.done.add("france");
     Game.save();
     Game.renderChrome();
     Game.melody();
@@ -107,21 +107,21 @@ Game.scenes.cake = (stage) => {
 function showLetter(stage) {
   if (Game._3d) { Game._3d.dispose(); Game._3d = null; }
 
-  const card = el(`<section class="panel enter" style="max-width:660px">
+  const card = el(`<section class="glass enter reveal" style="max-width:680px">
     <div class="center">
-      <div class="win-photo"><img src="img/sq/hero.jpg" alt=""></div>
-      <div class="kicker" style="--c:#D98E8E">Journey's end</div>
-      <h2 style="margin-bottom:20px">生日快乐, ${CONFIG.name}</h2>
+      <div class="kicker" style="--c:#8E7BF0">and now… the real reason</div>
+      <h1 class="reveal-title">Happy Birthday,<br><em>${CONFIG.name}</em> 🎂</h1>
     </div>
     <div class="letter" id="letter"></div>
     <div class="signoff" id="sig">${CONFIG.letterSignoff}</div>
     <div class="cta-row" style="margin-top:22px">
       <button class="btn solid" id="again">More confetti</button>
-      <button class="btn ghost" id="replay">Start over</button>
+      <button class="btn ghost" id="replay">Start the journey over</button>
     </div>
   </section>`);
   stage.innerHTML = "";
   stage.appendChild(card);
+  Game.rain(9);
 
   const box = card.querySelector("#letter"), sig = card.querySelector("#sig");
   const text = CONFIG.letter.join("\n\n");
@@ -138,6 +138,6 @@ function showLetter(stage) {
   card.querySelector("#replay").onclick = () => {
     try { localStorage.removeItem(Game.KEY); } catch (e) {}
     Game.done = new Set();
-    Game.go("world");
+    Game.go("globe");
   };
 }

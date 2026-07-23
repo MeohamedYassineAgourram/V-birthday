@@ -1,5 +1,5 @@
 /* Stop 3 — debug.js. The CS-student wink: reorder the lines so the program runs. */
-Game.scenes.debugjs = (stage) => {
+Game.games.debugjs = (stage, c) => {
 
   const LINES = [
     { id: "declare", src: `  const parts = [];`,                      op: st => { st.declared = true; } },
@@ -30,11 +30,11 @@ Game.scenes.debugjs = (stage) => {
   let order = shuffle(SOLUTION.slice());
   while (order.join() === SOLUTION.join()) order = shuffle(order);
 
-  const card = el(`<section class="panel enter">
+  const card = el(`<section class="glass enter">
     <div class="head">
       <div class="glyph" style="--c:#8FB07A">符</div>
       <div class="t">
-        <div class="kicker" style="--c:#8FB07A">Trial · Runes</div>
+        <div class="kicker" style="--c:${(c&&c.tint)||'#7FA8C4'}">${c?c.flag+' '+c.name:''} · Runes</div>
         <h2>The Scrambled Runes</h2>
         <p>Four runes, out of order. Click two to swap them until the incantation runs.</p>
       </div>
@@ -83,7 +83,7 @@ Game.scenes.debugjs = (stage) => {
     } else if (st.out === EXPECTED) {
       out.style.color = "#7CFF9E";
       out.textContent = "> " + st.out;
-      if (!solved) { solved = true; setTimeout(() => Game.win("debugjs"), 950); }
+      if (!solved) { solved = true; setTimeout(() => Game.win(), 950); }
     } else {
       out.style.color = "#FFD86B";
       out.textContent = "> " + (st.out === null ? "(nothing printed)" : st.out);
