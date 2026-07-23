@@ -1,1 +1,16 @@
-{ "compilerOptions": { "baseUrl": ".", "paths": { "@/*": ["./*"] } } }
+{
+  "$schema": "https://json.schemastore.org/jsconfig",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    },
+    "allowJs": true,
+    "checkJs": false
+  },
+  "exclude": [
+    "node_modules",
+    ".next",
+    "public/journey"
+  ]
+}
