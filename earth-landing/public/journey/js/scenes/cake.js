@@ -1,14 +1,14 @@
-/* France · Paris — the finale. Blow out the candles, then the reveal. */
-Game.games.cake = (stage) => {
+/* Era 5 — the Moonlit Sanctuary. Blow out the candles, then the reveal. */
+Game.games.cake = (stage, c) => {
   const N = 5;
 
   const card = el(`<section class="glass center enter">
     <div class="head" style="text-align:left">
-      <div class="glyph" style="--c:#8E7BF0">🎂</div>
+        <div class="glyph" style="--c:#8E7BF0">☾</div>
       <div class="t">
-        <div class="kicker" style="--c:#8E7BF0">Paris · the journey's end</div>
-        <h2>You made it all the way here</h2>
-        <p id="prompt">Five candles for five countries. Blow into your microphone to put them out.</p>
+        <div class="kicker" style="--c:#8E7BF0">${c ? c.name : "The Moonlit Sanctuary"} · the final gate</div>
+        <h2>You made it through every era</h2>
+        <p id="prompt">Five candles for five time seals. Blow into your microphone to put them out.</p>
       </div>
     </div>
 

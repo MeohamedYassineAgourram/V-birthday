@@ -1,6 +1,6 @@
 export const metadata = {
-  title: "Viviane's Route — The Journey",
-  description: "Five missions around the world.",
+  title: "The Hidden Horizon — Time Map",
+  description: "Five missions across impossible eras.",
 };
 
 export default function JourneyPage() {

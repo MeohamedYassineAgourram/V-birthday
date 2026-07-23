@@ -1,71 +1,41 @@
-# Viviane's Route
+# The Hidden Horizon
 
-A premium, fullscreen (`100dvh`) space landing page inspired by high-end sustainability
-sites (Leonardo DiCaprio Foundation style), connected to the complete five-stop birthday journey.
+The unified Next.js application for Viviane's birthday adventure.
 
-**Stack:** Next.js (App Router) · React Three Fiber · @react-three/drei ·
-@react-three/postprocessing · GSAP · Tailwind CSS.
+The landing page at `/` is an original CSS-painted imaginary world. Its **Begin the
+journey** action opens `/journey`, an interactive five-era route that preserves the
+original game mechanics while changing the setting to time travel:
+
+1. **Tidebreak Isles** — memory pairs
+2. **Sunstone Ruins** — precision beacons
+3. **The Singing Dunes** — falling time-shards
+4. **The Waterfall Archives** — rune sequencing
+5. **The Moonlit Sanctuary** — the birthday finale
 
 ## Run
 
+From the repository root:
+
+```bash
+./launch.sh
+```
+
+Open [http://localhost:3003](http://localhost:3003), and stop it with:
+
+```bash
+./close.sh
+```
+
+For local development in this directory:
+
 ```bash
 npm install
-npm run dev      # http://localhost:3003
-# or: npm run build && npm run start
+npm run dev
 ```
 
-This is the single project to run. The landing is the Next.js application at `/`; its
-**Begin the journey** action opens the existing game at `/journey`.
+## Notes
 
-Drop your Earth model at `public/models/earth.glb` and a cinematic still at
-`public/img/thumb.jpg` (both already included).
-
-## What's on the page
-
-- **Deep-space background** — thousands of stars (`drei <Stars>`), fog, and a faint
-  procedural nebula (an inward-facing sphere shader — no flat image).
-- **A very large Earth** on the right, extending off-screen with South America centered,
-  realistic lighting, a Fresnel **atmosphere** shell (blue edge glow), soft **bloom**,
-  slow rotation, and smooth **inertial** mouse parallax.
-- **Glowing UI markers** pinned over the Amazon — pulsing rings with a center dot, that
-  enlarge on hover and occlude behind the globe.
-- **A floating dark-glass card** on the left — thumbnail, `CASE 35`, title, description,
-  and a **Begin the journey** action. Slides in from the left with GSAP.
-- **Complete journey** — the original interactive Japan → South Korea → Morocco → China →
-  Paris game is served from `public/journey/` by the same Next.js application.
-
-No navigation, no timeline, no footer — exactly one viewport.
-
-## Structure
-
-```
-app/
-  layout.jsx        metadata + globals
-  page.jsx          composition: <Scene/> (ssr:false) + <ContentCard/> + vignette
-  globals.css       resets, marker + entrance keyframes, Tailwind
-components/
-  Scene.jsx         the R3F <Canvas>, camera, Suspense, responsive earth offset
-  Lighting.jsx      key + front fill + cool blue rim + ambient/hemisphere
-  Starfield.jsx     drei <Stars> + procedural nebula shader
-  Earth.jsx         loads /models/earth.glb, memoized, normalized, publishes mesh ref
-  Atmosphere.jsx    two additive Fresnel shells (outer halo + inner rim)
-  Markers.jsx       drei <Html> markers on the sphere, occluded by the Earth
-  Parallax.jsx      offset + spin group; inertial mouse rotation + camera parallax
-  Effects.jsx       EffectComposer: Bloom + Vignette
-  ContentCard.jsx   the glass panel; GSAP slide-in + subtle pointer parallax
-  earth-context.js  shares the Earth mesh ref with the markers
-```
-
-## Performance
-
-- `dynamic(..., { ssr:false })` for the WebGL scene; `<Suspense>` + `useGLTF.preload`.
-- Memoized geometries/materials; a single `useFrame` render loop; `dpr={[1,2]}` +
-  `<AdaptiveDpr>`; the Earth model is an optimized glTF (~0.5 MB).
-- Marker entrance and pulse are pure CSS (deterministic, independent of load timing);
-  GSAP drives the card entrance.
-
-## Responsive
-
-- **Desktop** — Earth dominates the right; card floats left at ~8%.
-- **Tablet** — Earth scales down; card overlaps the limb.
-- **Mobile** — Earth shifts upward and fills the frame; the card overlays, centered-low.
+- The landing and era landscapes are CSS-built original artwork; no reference imagery
+  is used as a site asset.
+- The journey is served from `public/journey/` inside the same Next.js app.
+- The project is intended to run only on port `3003`.

@@ -6,13 +6,13 @@ Game.scenes.journey = (stage) => {
 
   const view = el(`<section class="journey journey-deck enter">
     <header class="journey-head">
-      <div class="eyebrow"><span class="dot-live"></span> Route selection · ${Game.lit} of ${COUNTRIES.length} cleared</div>
-      <h1 class="journey-title">Choose your next destination</h1>
-      <p>Each stop unlocks a new part of the journey.</p>
+      <div class="eyebrow"><span class="dot-live"></span> Time map · ${Game.lit} of ${COUNTRIES.length} seals restored</div>
+      <h1 class="journey-title">Choose the next era</h1>
+      <p>Each time gate opens only after the one before it is restored.</p>
     </header>
 
-    <div class="destination-deck" id="destinationDeck" aria-label="Journey destinations"></div>
-    <p class="deck-hint">Select an available destination to bring it forward.</p>
+    <div class="destination-deck" id="destinationDeck" aria-label="Time-rift destinations"></div>
+    <p class="deck-hint">Select an available era to bring its gate forward.</p>
   </section>`);
   stage.appendChild(view);
 
@@ -22,12 +22,12 @@ Game.scenes.journey = (stage) => {
   const cardMarkup = (c, index) => {
     const open = Game.unlocked(c.id);
     const done = Game.done.has(c.id);
-    const action = done ? "Replay mission" : c.finale ? "Arrive in Paris" : "Begin mission";
+    const action = done ? "Replay era" : c.finale ? "Enter the sanctuary" : "Open time gate";
     const state = done ? "cleared" : open ? "available" : "locked";
 
     return `<article class="destination-card ${state}" data-id="${c.id}" data-slot="0"
       data-index="${index}" style="--c:${c.tint}" role="button" aria-label="${c.name}${open ? "" : ", locked"}" tabindex="${open ? "0" : "-1"}">
-      <div class="destination-image" style="background-image:url('img/loc/${c.id}_card.jpg')"></div>
+      <div class="destination-image realm-card realm-card-${c.id}"></div>
       <div class="destination-shade"></div>
       <div class="destination-topline">
         <span class="destination-step">${String(index + 1).padStart(2, "0")} / ${COUNTRIES.length}</span>

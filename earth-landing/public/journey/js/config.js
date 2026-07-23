@@ -11,7 +11,7 @@ const CONFIG = {
   // --- the letter at the very end. Each string is its own paragraph. ---
   letter: [
     "Happy Birthday, Viviane!",
-    "You followed the route across five worlds, solved every mission, and made it all the way to Paris. I hope this new chapter brings you brilliant ideas, gentle adventures, and lots of reasons to smile.",
+    "You crossed five impossible eras, solved every mission, and found your way back through the last gate. I hope this new chapter brings you brilliant ideas, gentle adventures, and lots of reasons to smile.",
     "生日快乐！愿新的一年里，每一天都闪闪发光。"
   ],
   letterSignoff: "— Your co-pilot",

@@ -17,16 +17,16 @@ Close the running app with:
 ./close.sh
 ```
 
-The cinematic Earth landing is served at `/`. Its **Begin the journey** action opens
-the complete five-stop birthday game at `/journey` in the same application.
+The CSS-painted imaginary-world landing is served at `/`. Its **Begin the journey**
+action opens the complete five-era birthday game at `/journey` in the same application.
 
 ## Structure
 
 ```
 earth-landing/
   app/                 Next.js landing and /journey route
-  components/          React Three Fiber Earth scene and landing components
-  public/journey/      The complete existing birthday game and its assets
+  app/                 Imaginary-world landing and /journey route
+  public/journey/      Five interactive time-realm missions and their assets
 ```
 
 The old root-level static files are retained as source material only; do not run them

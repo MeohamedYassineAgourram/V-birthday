@@ -1,9 +1,9 @@
-/* Stop 4 — debug.js. The CS-student wink: reorder the route so it compiles. */
+/* Era 4 — the Waterfall Archives. Rebuild the broken river sequence. */
 Game.games.debugjs = (stage, c) => {
 
   const LINES = [
     { id: "declare", src: `  const route = [];`,                        op: st => { st.declared = true; } },
-    { id: "push1",   src: `  route.push("Paris");`,                     op: st => st.push("Paris") },
+    { id: "push1",   src: `  route.push("Horizon");`,                  op: st => st.push("Horizon") },
     { id: "push2",   src: `  route.push(\`\${name}\`);`,                op: st => st.push(CONFIG.name) },
     { id: "log",     src: `  console.log(route.join(" → ") + " ✦");`,  op: st => st.log() }
   ];
@@ -32,18 +32,18 @@ Game.games.debugjs = (stage, c) => {
 
   const card = el(`<section class="glass enter">
     <div class="head">
-      <div class="glyph" style="--c:#8FB07A">符</div>
+        <div class="glyph" style="--c:#8FB07A">✺</div>
       <div class="t">
-        <div class="kicker" style="--c:${(c&&c.tint)||'#7FA8C4'}">${c?c.flag+' '+c.name:''} · Runes</div>
-        <h2>Route Compiler</h2>
-        <p>Four lines, out of order. Click two to swap them until the path compiles.</p>
+        <div class="kicker" style="--c:${(c&&c.tint)||'#7FA8C4'}">${c?c.flag+' '+c.name:''} · River runes</div>
+        <h2>The current compiler</h2>
+        <p>Four river-runes are out of order. Swap two at a time until the current flows.</p>
       </div>
     </div>
     <div class="code">
-      <div class="dim">function unlockRoute(name) {</div>
+      <div class="dim">function restoreCurrent(name) {</div>
       <div id="lines"></div>
       <div class="dim">}</div>
-      <div class="dim">unlockRoute(<span class="str">"${CONFIG.name}"</span>);</div>
+      <div class="dim">restoreCurrent(<span class="str">"${CONFIG.name}"</span>);</div>
     </div>
     <div class="out" id="out">&gt; _</div>
     <p class="muted" id="hint" style="margin-top:10px;min-height:20px"></p>

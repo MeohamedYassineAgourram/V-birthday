@@ -1,16 +1,16 @@
-/* Stop 2 — THE RANGE. A Valorant-inspired precision calibration. */
+/* Era 2 — Sunstone Ruins. A light-beacon calibration challenge. */
 Game.games.valorant = (stage, c) => {
   const TARGET = CONFIG.rangeTargets || 15;
   const FACES = ["hero", "ramen", "night", "study", "room", "field"];
 
   const wrap = el(`<section class="glass dim enter">
     <div class="head" style="margin-bottom:14px">
-      <div class="glyph" style="--c:#E8563F">战</div>
+        <div class="glyph" style="--c:#E8563F">☼</div>
       <div class="t">
-        <div class="kicker" style="--c:${(c&&c.tint)||'#7FA8C4'}">${c?c.flag+' '+c.name:''} · The Range</div>
-        <h2>Precision calibration</h2>
+        <div class="kicker" style="--c:${(c&&c.tint)||'#7FA8C4'}">${c?c.flag+' '+c.name:''} · Light calibration</div>
+        <h2>Sunstone beacons</h2>
         <p style="margin-top:4px">
-          ${TARGET} kills to clear. The top third of the head counts as a headshot 🎯
+          Light ${TARGET} drifting beacons to restore the observatory. Their upper halo gives a precision hit.
         </p>
       </div>
     </div>
@@ -26,7 +26,7 @@ Game.games.valorant = (stage, c) => {
         <div class="val-stat"><b id="hs">0</b><span>Headshots</span></div>
         <div class="val-stat"><b id="streak">0</b><span>Streak</span></div>
       </div>
-      <div class="muted">click / tap the targets</div>
+        <div class="muted">click / tap the beacons</div>
     </div>
   </section>`);
   stage.appendChild(wrap);
@@ -43,7 +43,7 @@ Game.games.valorant = (stage, c) => {
   };
 
   const float = (x, y, text, color) => {
-    const f = el(`<div class="floattext" style="left:${x}px;top:${y}px;color:${color}">${text}</div>`);
+      const f = el(`<div class="floattext" style="left:${x}px;top:${y}px;color:${color}">${text}</div>`);
     range.appendChild(f);
     setTimeout(() => f.remove(), 800);
   };
@@ -72,7 +72,7 @@ Game.games.valorant = (stage, c) => {
       t.classList.add("hit");
       Game.sfx(head ? "hit" : "shot");
       float(e.clientX - rr.left, e.clientY - rr.top,
-            head ? "HEADSHOT" : "+1", head ? "#2BE0C8" : "#fff");
+            head ? "PRECISION" : "+1", head ? "#FFE083" : "#fff");
       updateHud();
 
       if (kills >= TARGET) return finish();
@@ -97,10 +97,10 @@ Game.games.valorant = (stage, c) => {
     clearTimeout(timer);
     if (live) live.remove();
     const acc = shots ? Math.round(kills / shots * 100) : 100;
-    range.appendChild(el(`<div class="ace">ACE</div>`));
+    range.appendChild(el(`<div class="ace">GATE OPEN</div>`));
     Game.burst(80);
     setTimeout(() => {
-      Game.toast(`${acc}% accuracy · ${heads} headshots · ${best} streak 🔥`, 2600);
+      Game.toast(`${acc}% accuracy · ${heads} precision hits · ${best} streak ✦`, 2600);
       Game.win();
     }, 1300);
   };

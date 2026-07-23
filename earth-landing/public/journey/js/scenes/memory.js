@@ -1,4 +1,4 @@
-/* Stop 2 — Shiro buried the photos. Match the pairs. Mismatches cost nothing. */
+/* Era 1 — the Tidebreak Isles. Match the memory echoes. */
 Game.games.memory = (stage, c) => {
   const FACES = ["hero", "field", "night", "room", "study", "ramen"];
   const deck = shuffle([...FACES, ...FACES]);
@@ -7,9 +7,9 @@ Game.games.memory = (stage, c) => {
     <div class="head">
       <div class="glyph" style="--c:#7FA8C4">谜</div>
       <div class="t">
-        <div class="kicker" style="--c:${(c&&c.tint)||'#7FA8C4'}">${c?c.flag+' '+c.name:''} · Puzzle</div>
-        <h2>Petal Archive</h2>
-        <p>The route fragments are scattered beneath the blossoms. Find all six pairs.</p>
+        <div class="kicker" style="--c:${(c&&c.tint)||'#7FA8C4'}">${c?c.flag+' '+c.name:''} · Memory tide</div>
+        <h2>Echoes of the isles</h2>
+        <p>Six memories drifted apart in the warm current. Bring every pair back together.</p>
       </div>
     </div>
     <div class="grid" id="grid"></div>

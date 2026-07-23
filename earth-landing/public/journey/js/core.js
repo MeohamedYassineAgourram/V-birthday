@@ -1,40 +1,40 @@
-/* Router, progress, sound, confetti — a journey around the world. No dependencies. */
+/* Router, progress, sound, confetti — a journey through five time realms. */
 
-/* The five stops of the journey, in order. Each is a country + a mission. */
+/* The five eras stay in a fixed order; each keeps its original minigame. */
 const COUNTRIES = [
-  { id: "japan",   name: "Japan",       city: "Mt. Fuji · Kawaguchiko", flag: "🇯🇵",
-    game: "memory",   tint: "#E8709E", stamp: "日本", code: "MEMORY//01",
-    brief: "Petals hide the route fragments. Reconnect every pair beneath Mt. Fuji." },
-  { id: "korea",   name: "South Korea", city: "Seoul",                  flag: "🇰🇷",
-    game: "valorant", tint: "#5B8DEF", stamp: "한국", code: "RANGE//02",
-    brief: "Seoul's arena is live. Calibrate every target — precision gets you through." },
-  { id: "morocco", name: "Morocco",     city: "The Sahara",            flag: "🇲🇦",
-    game: "chocobi",  tint: "#E0A34B", stamp: "المغرب", code: "ORBIT//03",
-    brief: "Signals fall over the dunes. Catch the good ones and dodge the glitches." },
-  { id: "china",   name: "China",       city: "Shanghai",              flag: "🇨🇳",
-    game: "debugjs",  tint: "#E0483B", stamp: "中国", code: "CODE//04",
-    brief: "Four route fragments are out of order. Compile the way forward." },
-  { id: "france",  name: "France",      city: "Paris",                 flag: "🇫🇷",
-    game: "cake",     tint: "#8E7BF0", stamp: "Paris", finale: true, code: "FINAL//05",
-    brief: "The journey's end. One last wish under the Eiffel lights." }
+  { id: "japan",   name: "Tidebreak Isles",      city: "Year 4021 · Azure Age",      flag: "✦",
+    game: "memory",   tint: "#4BC8D4", stamp: "TIDE", code: "TIDE//01",
+    brief: "The sea remembers every path. Restore the lost pairs before the islands drift apart." },
+  { id: "korea",   name: "Sunstone Ruins",        city: "Year 1680 · Amber Age",      flag: "☼",
+    game: "valorant", tint: "#EF9C59", stamp: "SUN", code: "SUN//02",
+    brief: "An old observatory is waking up. Calibrate every beacon to reopen the next era." },
+  { id: "morocco", name: "The Singing Dunes",     city: "Year 0407 · Sand Age",       flag: "◈",
+    game: "chocobi",  tint: "#E4B144", stamp: "DUNE", code: "DUNE//03",
+    brief: "Small time-shards fall with the desert wind. Catch the bright ones and avoid the static." },
+  { id: "china",   name: "The Waterfall Archives",city: "Year 2860 · Rain Age",       flag: "✺",
+    game: "debugjs",  tint: "#78C99A", stamp: "RAIN", code: "RAIN//04",
+    brief: "The archive's sequence is broken. Put the runes back in order to let the river flow." },
+  { id: "france",  name: "The Moonlit Sanctuary", city: "Beyond time · Homeward Age", flag: "☾",
+    game: "cake",     tint: "#B69AF5", stamp: "HOME", finale: true, code: "HOME//05",
+    brief: "The last gate is waiting in the quiet moonlight. One wish will bring the journey home." }
 ];
 const byId = id => COUNTRIES.find(c => c.id === id);
 
 const Game = {
   stage:   document.getElementById("stage"),
-  scenes:  {},         // globe, journey, and one wrapper per country
+  scenes:  {},         // time-gate start, map, and one wrapper per realm
   games:   {},         // the minigame builders, keyed by game type
   order:   ["globe", "journey", ...COUNTRIES.map(c => c.id)],
   done:    new Set(),
   current: "globe",
-  active:  null,       // the country whose mission is running
+  active:  null,       // the realm whose mission is running
   traveling: false,
   _3d:     null,
-  KEY:     "vivi-journey-v1",
+  KEY:     "vivi-time-journey-v2",
 
   get lit() { return this.done.size; },
 
-  /* a country unlocks once every earlier country is done (linear journey) */
+  /* a realm unlocks once every earlier realm is restored (linear journey) */
   unlocked(id) {
     const i = COUNTRIES.findIndex(c => c.id === id);
     return COUNTRIES.slice(0, i).every(c => this.done.has(c.id));
@@ -55,15 +55,14 @@ const Game = {
     scrollTo({ top: 0 });
   },
 
-  /* a cinematic zoom-wipe between scenes, tinted by the destination country */
+  /* A rift opens between each era. */
   travel(name) {
     if (this.traveling) return;
     this.traveling = true;
     const c = byId(name);
     const ov = document.getElementById("warp");
     if (!ov) { this.go(name); return; }
-    const nextImage = c ? `url("img/loc/${c.id}.jpg")` : `url("img/loc/japan_card.jpg")`;
-    ov.style.setProperty("--img", nextImage);
+    ov.style.setProperty("--img", "none");
     ov.style.setProperty("--tint", c ? c.tint : "#0a0e17");
     ov.classList.remove("out"); ov.classList.add("in");
     this.sfx("whoosh");
@@ -74,14 +73,14 @@ const Game = {
     }, 620);
   },
 
-  /* ---------- world theming (per-country backdrop) ---------- */
+  /* ---------- world theming (each realm is painted in CSS) ---------- */
   setWorld(name) {
     const c = byId(name);
     document.body.dataset.world = name;
     const bd = document.getElementById("backdrop");
     if (bd) {
-      bd.style.backgroundImage = c ? `url("img/loc/${c.id}.jpg")` : "none";
-      bd.classList.toggle("on", !!c);
+      bd.style.backgroundImage = "";
+      bd.classList.toggle("on", name !== "globe");
     }
     document.documentElement.style.setProperty("--tint", c ? c.tint : "#5B8DEF");
   },
@@ -91,7 +90,7 @@ const Game = {
     catch (e) {}
   },
 
-  /* A mission is cleared → stamp the passport, then continue the journey. */
+  /* A mission is cleared → restore a time seal, then continue the journey. */
   win() {
     const c = this.active;
     if (!c) return;
@@ -102,18 +101,18 @@ const Game = {
     this.burst(80);
     this.renderChrome();
 
-    if (c.finale) return;   // France runs its own finale (birthday reveal)
+    if (c.finale) return;   // the final realm runs its own birthday reveal
 
     const next = this.nextCountry();
     const card = el(`<div class="glass narrow center enter">
       <div class="stamp" style="--c:${c.tint}">${c.flag}<span>${c.stamp}</span></div>
       <div class="kicker">${c.name} · cleared</div>
-      <h2>${wasNew ? "Passport stamped" : "Cleared again"}</h2>
+      <h2>${wasNew ? "Time seal restored" : "Restored again"}</h2>
       <p class="lead">${this.lit} of ${COUNTRIES.length} stops complete.
         ${next ? `Next: <b>${next.flag} ${next.name}</b>.` : ""}</p>
       <div class="cta-row">
-        ${next ? `<button class="btn solid" id="nx">Fly to ${next.name} <span>→</span></button>` : ""}
-        <button class="btn ghost" id="board">The journey</button>
+        ${next ? `<button class="btn solid" id="nx">Open ${next.name} <span>→</span></button>` : ""}
+        <button class="btn ghost" id="board">The time map</button>
       </div>
     </div>`);
     this.stage.innerHTML = "";
@@ -123,7 +122,7 @@ const Game = {
     card.querySelector("#board").onclick = () => this.go("journey");
   },
 
-  /* ---------- floating chrome: the passport strip ---------- */
+  /* ---------- floating chrome: the era strip ---------- */
   renderChrome() {
     const onJourney = this.current !== "globe";
     document.querySelector(".chrome").classList.toggle("hidden", !onJourney);
@@ -240,7 +239,7 @@ function el(html) {
 const shuffle = a => a.map(v => [Math.random(), v]).sort((x, y) => x[0] - y[0]).map(p => p[1]);
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 
-/* Each country scene = its backdrop (set in setWorld) + the minigame on top.
+/* Each realm scene = its backdrop (set in setWorld) + the minigame on top.
    Games are registered later by the scene files; read them lazily at call time. */
 COUNTRIES.forEach(c => {
   Game.scenes[c.id] = (stage) => {

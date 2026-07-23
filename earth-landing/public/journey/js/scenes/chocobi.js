@@ -1,18 +1,18 @@
-/* Stop 3 — desert signal rain. Catch the route markers, dodge the glitches. */
+/* Era 3 — Singing Dunes. Catch bright time-shards, dodge the static. */
 Game.games.chocobi = (stage, c) => {
   const target = CONFIG.chocobiTarget;
 
   const card = el(`<section class="glass enter">
     <div class="head">
-      <div class="glyph" style="--c:#E3B341">拾</div>
+        <div class="glyph" style="--c:#E3B341">◈</div>
       <div class="t">
         <div class="kicker" style="--c:${(c&&c.tint)||'#7FA8C4'}">${c?c.flag+' '+c.name:''} · Gather</div>
-        <h2>Desert Signal Rain</h2>
-        <p>Catch <b>${target}</b> route markers. The green glitches interrupt the signal.</p>
+        <h2>Falling time-shards</h2>
+        <p>Catch <b>${target}</b> bright shards. The green static interrupts the signal.</p>
       </div>
     </div>
     <div class="frame" id="frame">
-      <div class="frame-bg" style="background-image:url('img/field.jpg')"></div>
+      <div class="frame-bg dune-frame"></div>
       <div class="frame-veil"></div>
       <div class="hud-pill" id="score">0 / ${target}</div>
       <div class="hud-hint">mouse · finger · ← →</div>
@@ -83,7 +83,7 @@ Game.games.chocobi = (stage, c) => {
         o.hit = o.dead = true;
         if (o.bad) {
           Game.sfx("bad"); caught = Math.max(0, caught - 1);
-          Game.toast("BLEH! 🥬 not a snack", 1100);
+          Game.toast("Static cloud — not a shard", 1100);
         } else { Game.sfx("good"); caught++; }
         scoreEl.textContent = `${caught} / ${target}`;
         if (caught >= target) { stop(); setTimeout(() => Game.win(), 300); }

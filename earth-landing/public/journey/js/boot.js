@@ -1,6 +1,6 @@
 /* Startup: sound, resume, dev shortcuts. Start on the globe. */
 (() => {
-  document.title = "Do you accept the challenge?";
+  document.title = "The Hidden Horizon";
 
   const btn = document.getElementById("soundBtn");
   btn.onclick = () => {
@@ -12,7 +12,7 @@
   // DEV ONLY: ?dev=japan jumps straight to a scene
   const dev = new URLSearchParams(location.search).get("dev");
   if (dev && Game.order.includes(dev)) {
-    // unlock everything up to the requested country for testing
+    // unlock everything up to the requested realm for testing
     const i = COUNTRIES.findIndex(c => c.id === dev);
     if (i > 0) COUNTRIES.slice(0, i).forEach(c => Game.done.add(c.id));
     if (dev === "france") COUNTRIES.slice(0, 4).forEach(c => Game.done.add(c.id));
