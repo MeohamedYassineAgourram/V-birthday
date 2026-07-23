@@ -1,7 +1,7 @@
-# Earth — Cinematic Landing
+# Viviane's Route
 
 A premium, fullscreen (`100dvh`) space landing page inspired by high-end sustainability
-sites (Leonardo DiCaprio Foundation style). Original implementation, using my own Earth model.
+sites (Leonardo DiCaprio Foundation style), connected to the complete five-stop birthday journey.
 
 **Stack:** Next.js (App Router) · React Three Fiber · @react-three/drei ·
 @react-three/postprocessing · GSAP · Tailwind CSS.
@@ -10,9 +10,12 @@ sites (Leonardo DiCaprio Foundation style). Original implementation, using my ow
 
 ```bash
 npm install
-npm run dev      # http://localhost:3000
+npm run dev      # http://localhost:3003
 # or: npm run build && npm run start
 ```
+
+This is the single project to run. The landing is the Next.js application at `/`; its
+**Begin the journey** action opens the existing game at `/journey`.
 
 Drop your Earth model at `public/models/earth.glb` and a cinematic still at
 `public/img/thumb.jpg` (both already included).
@@ -27,7 +30,9 @@ Drop your Earth model at `public/models/earth.glb` and a cinematic still at
 - **Glowing UI markers** pinned over the Amazon — pulsing rings with a center dot, that
   enlarge on hover and occlude behind the globe.
 - **A floating dark-glass card** on the left — thumbnail, `CASE 35`, title, description,
-  and a `WATCH VIDEO` button. Slides in from the left with GSAP.
+  and a **Begin the journey** action. Slides in from the left with GSAP.
+- **Complete journey** — the original interactive Japan → South Korea → Morocco → China →
+  Paris game is served from `public/journey/` by the same Next.js application.
 
 No navigation, no timeline, no footer — exactly one viewport.
 

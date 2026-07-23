@@ -1,8 +1,8 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Earth — Cinematic Landing",
-  description: "A premium fullscreen space visualization.",
+  title: "Viviane's Route",
+  description: "A cinematic journey around the world.",
   icons: { icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>\uD83C\uDF0D</text></svg>" },
 };
 

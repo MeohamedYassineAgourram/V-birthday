@@ -21,6 +21,10 @@ export default function ContentCard() {
     return () => ctx.revert();
   }, []);
 
+  const beginJourney = () => {
+    window.location.assign("/journey");
+  };
+
   // subtle mouse parallax — the card drifts a few pixels
   useEffect(() => {
     const inner = innerRef.current;
@@ -96,6 +100,7 @@ export default function ContentCard() {
             </p>
 
             <button
+              onClick={beginJourney}
               className="group mt-5 inline-flex items-center gap-3 text-[12px] font-semibold uppercase tracking-widest2 text-ink transition-opacity hover:opacity-80"
               type="button"
             >
@@ -107,7 +112,7 @@ export default function ContentCard() {
                   <path d="M0 0L10 6L0 12V0Z" fill="currentColor" />
                 </svg>
               </span>
-              Watch video
+              Begin the journey
             </button>
           </div>
         </div>
