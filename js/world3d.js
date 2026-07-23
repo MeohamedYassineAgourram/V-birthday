@@ -31,25 +31,20 @@ const World3D = (() => {
     return cached;
   }
 
-  /* small flat-shaded crystal for a waypoint (built procedurally, not from the model) */
+  /* a floating waypoint gem — no post, to keep the clean minimal look */
   function marker(color) {
     const g = new THREE.Group();
     const c = new THREE.Color(color);
-    const post = new THREE.Mesh(
-      new THREE.CylinderGeometry(.018, .022, .34, 5),
-      new THREE.MeshLambertMaterial({ color: 0x4a3b2e })
-    );
-    post.position.y = .17; g.add(post);
     const crystal = new THREE.Mesh(
-      new THREE.OctahedronGeometry(.16, 0),
+      new THREE.OctahedronGeometry(.15, 0),
       new THREE.MeshLambertMaterial({ color: c, emissive: c, emissiveIntensity: .5, flatShading: true })
     );
-    crystal.position.y = .56; g.add(crystal);
+    crystal.position.y = .5; g.add(crystal);
     const ring = new THREE.Mesh(
-      new THREE.TorusGeometry(.24, .017, 6, 20),
-      new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: .55 })
+      new THREE.TorusGeometry(.22, .015, 6, 20),
+      new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: .5 })
     );
-    ring.rotation.x = Math.PI / 2; ring.position.y = .56; g.add(ring);
+    ring.rotation.x = Math.PI / 2; ring.position.y = .5; g.add(ring);
     g.userData = { crystal, ring };
     return g;
   }
@@ -67,23 +62,48 @@ const World3D = (() => {
     renderer.setSize(W0, H0, false);
     renderer.outputEncoding = THREE.sRGBEncoding;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.15;
+    renderer.toneMappingExposure = 1.2;
     container.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(34, W0 / H0, .01, 100);
-    const CAM_R = 4.4, CAM_Y = 1.7;
+    const CAM_R = 5.1, CAM_Y = 2.35;
     let camAngle = -.6, camAngleT = -.6;
 
-    // warm key + cool sky fill, tuned for the sunset landing
-    scene.add(new THREE.HemisphereLight(0xFFE9CF, 0x5A6B7A, 1.15));
-    const key = new THREE.DirectionalLight(0xFFE3B0, 2.1);
-    key.position.set(-6, 5, 4); scene.add(key);
-    const rim = new THREE.DirectionalLight(0xFFC89A, .8);
-    rim.position.set(5, 2, -6); scene.add(rim);
+    // clean, bright, neutral studio light — the minimal look, not a sunset
+    scene.add(new THREE.HemisphereLight(0xFFFFFF, 0xD6DEDA, 1.3));
+    const key = new THREE.DirectionalLight(0xFFFFFF, 1.7);
+    key.position.set(-5, 7, 5); scene.add(key);
+    const fill = new THREE.DirectionalLight(0xEAF1EE, .7);
+    fill.position.set(6, 2, -5); scene.add(fill);
 
     const root = new THREE.Group();
     scene.add(root);
+
+    /* a faint tilted orbit ring + drifting geometric accents (from the reference) */
+    const deco = new THREE.Group();
+    deco.rotation.x = -0.42;
+    deco.position.y = .1;
+    scene.add(deco);
+    const ring = new THREE.Mesh(
+      new THREE.TorusGeometry(2.55, .006, 3, 120),
+      new THREE.MeshBasicMaterial({ color: 0x2E7D4F, transparent: true, opacity: .18 })
+    );
+    deco.add(ring);
+    const accents = [];
+    const accentMat = new THREE.MeshLambertMaterial({ color: 0xCBD3CE, flatShading: true });
+    const whiteMat = new THREE.MeshStandardMaterial({ color: 0xFFFFFF, roughness: .5 });
+    for (let i = 0; i < 7; i++) {
+      const white = i % 3 === 0;
+      const m = new THREE.Mesh(
+        white ? new THREE.SphereGeometry(.07 + Math.random() * .05, 16, 12)
+              : new THREE.DodecahedronGeometry(.11 + Math.random() * .07, 0),
+        white ? whiteMat : accentMat
+      );
+      m.userData = { a: (i / 7) * Math.PI * 2, r: 2.55, sp: .12 + Math.random() * .1,
+                     yb: (Math.random() - .5) * .3, spin: (Math.random() - .5) * .04 };
+      accents.push(m); deco.add(m);
+    }
 
     const markers = [];
     let modelReady = false, ISLAND_TOP = 1;
@@ -123,7 +143,7 @@ const World3D = (() => {
       const box = new THREE.Box3().setFromObject(model);
       const size = box.getSize(new THREE.Vector3());
       const ctr = box.getCenter(new THREE.Vector3());
-      const scale = 3.4 / Math.max(size.x, size.z);
+      const scale = 2.7 / Math.max(size.x, size.z);
       model.position.set(-ctr.x, -ctr.y, -ctr.z);
       const holder = new THREE.Group();
       holder.add(model);
@@ -160,10 +180,19 @@ const World3D = (() => {
       if (!dragging && !reduced) camAngleT += .0012;
       camAngle += (camAngleT - camAngle) * .07;
       camera.position.set(Math.sin(camAngle) * CAM_R, CAM_Y, Math.cos(camAngle) * CAM_R);
-      camera.lookAt(0, 0, 0);
+      camera.lookAt(0, .62, 0);
 
       root.position.y = Math.sin(t * .5) * .05;
       root.rotation.z = Math.sin(t * .38) * .008;
+
+      // orbit ring + accents drift around the island
+      ring.rotation.z += .0015;
+      accents.forEach(m => {
+        m.userData.a += m.userData.sp * .01;
+        const d = m.userData;
+        m.position.set(Math.cos(d.a) * d.r, d.yb + Math.sin(t * .6 + d.a) * .12, Math.sin(d.a) * d.r);
+        m.rotation.x += d.spin; m.rotation.y += d.spin;
+      });
 
       if (modelReady) {
         ray.setFromCamera(ptr, camera);
@@ -178,7 +207,7 @@ const World3D = (() => {
         markers.forEach(m => {
           const d = m.userData, hot = m === hovered;
           d.crystal.rotation.y += .015;
-          d.crystal.position.y = .56 + Math.sin(t * 1.6 + d.ph) * .05;
+          d.crystal.position.y = .5 + Math.sin(t * 1.6 + d.ph) * .05;
           const sc = hot ? 1.4 : 1;
           d.crystal.scale.lerp(v.set(sc, sc, sc), .16);
           d.ring.rotation.z += .01;
@@ -187,7 +216,7 @@ const World3D = (() => {
 
           if (opts.onProject) {
             m.getWorldPosition(v);
-            v.y += .95;
+            v.y += .8;
             v.project(camera);
             opts.onProject(d.id, (v.x * .5 + .5) * container.clientWidth,
                                 (-v.y * .5 + .5) * container.clientHeight, v.z < 1);

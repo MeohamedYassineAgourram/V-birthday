@@ -15,14 +15,14 @@
 /* ---------- worlds ---------- */
 /* the landing: an empty, creamy sky */
 [data-world="map"], [data-world="hero"]{
-  --sky:linear-gradient(180deg,#4A7BA6 0%,#6E9BC0 22%,#B9C9D4 44%,#F4C9A8 72%,#FBE0C0 100%);
-  --fg:#FFFFFF; --fg-2:rgba(255,255,255,.82); --fg-3:rgba(255,255,255,.6);
-  --surface:rgba(255,255,255,.16); --surface-hi:rgba(255,255,255,.9);
-  --line:rgba(255,255,255,.34); --line-hi:rgba(255,255,255,.5);
-  --solid:#FFFFFF; --on-solid:#2A2320;
-  --accent:#FF9A52;
-  --shadow:0 8px 26px rgba(60,40,30,.22);
-  --shadow-lg:0 26px 70px rgba(60,40,30,.3);
+  --sky:linear-gradient(180deg,#FCFCFC 0%,#F4F6F5 62%,#EDF1EE 100%);
+  --fg:#1C2420; --fg-2:#5C6660; --fg-3:#95A09A;
+  --surface:#FFFFFF; --surface-hi:#FFFFFF;
+  --line:rgba(28,36,32,.1); --line-hi:rgba(28,36,32,.16);
+  --solid:#2E7D4F; --on-solid:#FFFFFF;
+  --accent:#2E7D4F;
+  --shadow:0 6px 20px rgba(40,70,55,.08);
+  --shadow-lg:0 24px 60px rgba(40,70,55,.14);
 }
 /* GATHER — a bright open afternoon */
 [data-world="chocobi"]{
@@ -84,15 +84,20 @@
 html{-webkit-text-size-adjust:100%}
 body{
   margin:0;min-height:100vh;font-family:var(--sans);color:var(--fg);
-  background:#F6EFE2;overflow-x:hidden;transition:color .6s ease;
+  background:#DCDFE2;overflow-x:hidden;transition:color .6s ease,background .6s ease;
   -webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;
 }
 img{max-width:100%;display:block}
 .hidden{display:none !important}
 
-/* ---------- sky ---------- */
-.sky{position:fixed;inset:0;z-index:0;background:var(--sky);transition:background .8s ease;overflow:hidden}
+/* ---------- sky / backdrop ---------- */
+.sky{position:fixed;inset:0;z-index:0;background:var(--sky);transition:background .8s ease,inset .5s ease,border-radius .5s ease;overflow:hidden}
 .skyfx{position:absolute;inset:0;width:100%;height:100%;display:block}
+/* the clean landing floats as a rounded white card on light grey */
+[data-world="map"] .sky,[data-world="hero"] .sky{
+  inset:16px;border-radius:30px;box-shadow:0 30px 80px rgba(40,50,45,.14);
+  background:radial-gradient(120% 90% at 50% 8%, #FFFFFF 0%, #F4F7F4 55%, #EAEFEA 100%);
+}
 .ambient{position:absolute;inset:0}
 
 /* whatever drifts through this particular world */
@@ -138,7 +143,9 @@ img{max-width:100%;display:block}
   padding:9px 16px;border-radius:var(--r-pill);cursor:pointer;transition:background .22s,color .22s;white-space:nowrap;
 }
 .pillnav button:hover:not(:disabled){background:var(--surface-hi);color:var(--fg)}
-.pillnav button.on{background:var(--solid);color:var(--on-solid);font-weight:500}
+.pillnav button.on{background:var(--surface-hi);color:var(--fg);font-weight:500;box-shadow:var(--shadow)}
+[data-world="valorant"] .pillnav button.on,[data-world="debugjs"] .pillnav button.on{
+  background:rgba(255,255,255,.18)}
 .pillnav button.done::after{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;
   background:var(--accent);margin-left:7px;vertical-align:middle}
 .pillnav button:disabled{opacity:.4;cursor:not-allowed}
@@ -157,6 +164,7 @@ img{max-width:100%;display:block}
 .stage{position:relative;z-index:10;min-height:100vh;display:flex;flex-direction:column;
   align-items:center;justify-content:center;padding:92px 28px 48px}
 .enter{animation:enter .7s var(--ease) both;width:100%}
+.panel,.map-wrap{margin-top:auto;margin-bottom:auto}
 @keyframes enter{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
 
 /* ---------- type ---------- */
@@ -208,24 +216,57 @@ p{margin:0 0 12px;line-height:1.62;color:var(--fg-2);font-size:clamp(14.5px,1.55
 .stat b{display:block;font-size:21px;font-weight:400;letter-spacing:-.02em}
 .stat span{font-size:10.5px;color:var(--fg-3);letter-spacing:.14em;text-transform:uppercase}
 
-/* ---------- the island map ---------- */
-.map-wrap{width:100%;max-width:1080px;margin:0 auto;text-align:center}
-.map-title{font-size:clamp(28px,4.4vw,54px);margin-bottom:2px}
-.viewport{position:relative;width:100%;height:min(58vh,520px);cursor:grab;touch-action:none}
+/* ---------- the clean landing ---------- */
+.map-wrap{width:100%;max-width:1000px;margin:0 auto;text-align:center;position:relative}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--fg-2);font-weight:500;
+  background:#F1F4F1;border:1px solid var(--line);padding:6px 14px;border-radius:var(--r-pill);margin-bottom:14px;
+}
+.eyebrow .leaf{filter:saturate(1.1)}
+.map-title{
+  font-size:clamp(30px,4.6vw,52px);font-weight:300;letter-spacing:-.04em;line-height:1.04;margin:0 0 12px;
+}
+.map-sub{max-width:52ch;margin:0 auto;color:var(--fg-2);font-size:clamp(14px,1.55vw,16px);line-height:1.6}
+.map-wrap .cta-row{margin-top:18px;margin-bottom:0}
+.btn.solid span,.btn.ghost span{font-size:1.05em;opacity:.85}
+
+.map-foot-left{
+  position:absolute;left:2px;bottom:6px;display:flex;align-items:center;gap:9px;text-align:left;
+  font-size:12px;color:var(--fg-2);line-height:1.35;
+}
+.map-foot-left .foot-ic{
+  width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:14px;
+  background:#F1F4F1;border:1px solid var(--line);
+}
+.map-foot-left b{color:var(--fg);font-weight:600}
+.map-foot-right{position:absolute;right:2px;bottom:6px;display:flex;gap:6px}
+.foot-seal{
+  width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:12px;
+  border:1px solid var(--line);background:#F6F8F6;color:var(--fg-3);transition:all .4s;
+}
+.foot-seal.on{background:var(--c);color:#fff;border-color:transparent;box-shadow:var(--shadow)}
+
+.viewport{position:relative;width:100%;height:min(44vh,400px);cursor:grab;touch-action:none;margin-top:20px}
+/* soft grounding glow + orbit hint behind the island, like the reference */
+.stage-glow{position:absolute;left:50%;top:52%;width:min(60%,520px);aspect-ratio:1;transform:translate(-50%,-50%);
+  pointer-events:none;z-index:0;
+  background:radial-gradient(circle, rgba(46,125,79,.08) 0%, rgba(46,125,79,0) 62%);}
+.stage-glow::after{content:"";position:absolute;left:50%;top:58%;width:82%;height:34%;transform:translate(-50%,-50%);
+  border-radius:50%;background:radial-gradient(closest-side, rgba(40,55,48,.12), transparent 78%);filter:blur(3px)}
 .viewport:active{cursor:grabbing}
 .viewport canvas{display:block;width:100%;height:100%}
 .signposts{position:absolute;inset:0;pointer-events:none;z-index:3}
 .signposts.flat{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;position:relative}
 .signpost{
-  position:absolute;left:0;top:0;pointer-events:auto;cursor:pointer;
-  display:flex;flex-direction:column;align-items:center;gap:1px;padding:8px 15px;border-radius:14px;
-  background:var(--surface-hi);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
-  border:1px solid var(--line);box-shadow:var(--shadow);color:var(--fg);
-  transition:opacity .3s,transform .22s var(--ease),background .22s;white-space:nowrap;
+  position:absolute;left:0;top:0;opacity:0;pointer-events:none;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:1px;padding:7px 14px;border-radius:13px;
+  background:#fff;border:1px solid rgba(28,36,32,.14);
+  box-shadow:0 4px 14px rgba(40,60,50,.14),0 1px 3px rgba(40,60,50,.1);color:var(--fg);
+  transition:opacity .3s,transform .22s var(--ease),box-shadow .22s;white-space:nowrap;
 }
 .signpost::after{content:"";position:absolute;left:50%;bottom:-5px;width:9px;height:9px;
-  transform:translateX(-50%) rotate(45deg);background:var(--surface-hi);
-  border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+  transform:translateX(-50%) rotate(45deg);background:#fff;
+  border-right:1px solid rgba(28,36,32,.14);border-bottom:1px solid rgba(28,36,32,.14)}
 /* far-side labels hang under their marker, so the pointer flips to the top edge */
 .signpost.below::after{bottom:auto;top:-5px;
   border:0;border-left:1px solid var(--line);border-top:1px solid var(--line)}

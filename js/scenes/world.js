@@ -1,26 +1,52 @@
 /* The map: the low-poly island in an open sky, with signposts pinned to its waypoints. */
 Game.scenes.world = (stage) => {
+  const first = (TRIALS.find(s => !Game.done.has(s.id)) || STOPS[0]).id;
+  const summitOpen = TRIALS.every(s => Game.done.has(s.id));
+
   const view = el(`<section class="map-wrap enter">
-    <div class="badge">
-      <span style="width:6px;height:6px;border-radius:50%;background:var(--accent);display:block"></span>
-      July 24 · ${Game.lit} of ${STOPS.length} seals recovered
+    <div class="eyebrow">
+      <span class="leaf">🌱</span> Providing a birthday journey <span class="leaf">🌱</span>
     </div>
-    <h1 class="map-title">Happy Birthday, <em>${CONFIG.name}</em></h1>
+    <h1 class="map-title">Happy Birthday,<br>${CONFIG.name}</h1>
+    <p class="map-sub">Five little trials float above the clouds. Clear them in any order —
+      the summit opens once all four are done.</p>
+
+    <div class="cta-row">
+      <button class="btn solid" id="begin">${Game.lit ? "Continue" : "Begin the journey"} <span>→</span></button>
+      <button class="btn ghost" id="how">How it works <span>↗</span></button>
+    </div>
 
     <div class="viewport" id="viewport">
+      <div class="stage-glow"></div>
       <div class="signposts" id="signposts"></div>
-      <div class="vp-loading" id="loading">
-        <span class="spin"></span> shaping the island…
-      </div>
+      <div class="vp-loading" id="loading"><span class="spin"></span> shaping the island…</div>
     </div>
 
-    <!-- caption sits under the scene: markers on the far side project high in the frame -->
-    <p class="muted" id="blurb" style="min-height:20px;margin:4px 0 0">
-      Five trials float above the clouds. Take them in any order — the summit opens last.
-    </p>
-    <div class="vp-hint-static">drag to look around · click a marker to begin</div>
+    <p class="muted" id="blurb" style="min-height:18px;margin:2px 0 0"></p>
+
+    <div class="map-foot-left">
+      <span class="foot-ic">🎂</span>
+      <span>Made for ${CONFIG.name}<br><b>24 July</b></span>
+    </div>
+    <div class="map-foot-right" id="footSeals"></div>
   </section>`);
   stage.appendChild(view);
+
+  // progress badges, bottom-right, echoing the reference's icon cluster
+  const footSeals = view.querySelector("#footSeals");
+  STOPS.forEach(s => {
+    const done = Game.done.has(s.id);
+    footSeals.appendChild(el(
+      `<span class="foot-seal ${done ? "on" : ""}" style="--c:${s.color}" title="${s.en}">${done ? s.cn : "·"}</span>`
+    ));
+  });
+
+  view.querySelector("#begin").onclick = () => {
+    Game.audio(); Game.sfx("good");
+    Game.go(summitOpen ? "cake" : first);
+  };
+  view.querySelector("#how").onclick = () =>
+    Game.toast("Click a glowing marker on the island to start a trial ✨", 2800);
 
   const viewport = view.querySelector("#viewport");
   const posts = view.querySelector("#signposts");
@@ -56,21 +82,15 @@ Game.scenes.world = (stage) => {
     Game.go(s.id);
   };
 
-  // hide signposts until the model resolves, so they don't float over empty sky
-  posts.style.opacity = "0";
-
+  // each label starts hidden (CSS) and layout() reveals it once the island projects it;
+  // no parent-opacity gate — that fought the .enter animation and stuck at 0
   Game._3d = typeof World3D !== "undefined"
     ? World3D.createWorld(viewport, STOPS, {
-        onReady: () => {
-          loading.classList.add("gone");
-          posts.style.transition = "opacity .6s ease";
-          posts.style.opacity = "1";
-        },
+        onReady: () => loading.classList.add("gone"),
         onError: () => {
           loading.classList.add("gone");
           Game._3d = null;
           posts.classList.add("flat");
-          posts.style.opacity = "1";
           Object.values(nodes).forEach(n => { n.style.transform = "none"; n.style.opacity = "1"; });
           cancelAnimationFrame(layoutRaf);
         },

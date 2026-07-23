@@ -14,9 +14,9 @@ Opening `index.html` directly works too — classic scripts, no modules, no buil
 ## The world
 
 The landing page *is* the map: a detailed glTF floating island (a house with a blue roof,
-a waterfall, pines, drifting rock debris) turning slowly in a warm sunset sky. You **drag
-to orbit** it. Five waypoints glow on the island; each has a signpost anchored to it in
-HTML, tracked to its 3D position every frame.
+a waterfall, pines, drifting rock debris) turning slowly on a clean white studio backdrop. You **drag to orbit** it; a faint green
+orbit ring and small floating spheres/hexagons drift around it. Five waypoints glow on the
+island, each with a signpost anchored to it in HTML, tracked to its 3D position every frame.
 
 The model ships at `models/island.glb` (~15 MB). The original was 163 MB — see *The model*
 below.
@@ -26,7 +26,7 @@ type colour, surface tint and weather, all driven off `[data-world]` on `<body>`
 
 | World | Sky | Weather |
 |---|---|---|
-| Map | warm sunset | painted volumetric cumulus, low sun + god rays |
+| Map | clean white card on grey | orbit ring + floating accents (no weather) |
 | GATHER | bright afternoon | drifting clouds |
 | PUZZLE | lilac dusk | falling petals |
 | BATTLE | deep night | starfield |
@@ -100,7 +100,6 @@ index.html          the shell: sky layer, floating chrome
 styles.css          the whole design system
 js/config.js        ← the only file with anything personal in it
 js/core.js          missions, router, progress, sound, confetti
-js/sky.js           the painted sunset cloudscape (landing only)
 js/world3d.js       loads island.glb, waypoints, projection callbacks
 vendor/             three.module.js, GLTFLoader, BufferGeometryUtils (ESM)
 models/island.glb   the optimized 3D island

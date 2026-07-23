@@ -52,13 +52,11 @@ const Game = {
     if (!amb) return;
     amb.innerHTML = "";
 
-    // the landing gets a full painted sunset cloudscape; other worlds keep CSS weather
-    const sunset = !STOPS.some(x => x.id === name);   // map / hero
+    // the landing is clean and minimal — no weather at all; the island's own
+    // orbit ring and floating accents carry it. Missions keep their weather.
     if (this._sky) { this._sky.dispose(); this._sky = null; }
-    if (sunset && typeof SkyFX !== "undefined") {
-      this._sky = SkyFX.mount(document.querySelector(".sky"));
-      return;                                          // no CSS puffs on the landing
-    }
+    if (!STOPS.some(x => x.id === name)) return;       // map / hero: nothing drifting
+
     const add = (cls, style) => amb.appendChild(el(`<span class="amb ${cls}" style="${style}"></span>`));
     const rand = (a, b) => a + Math.random() * (b - a);
 
