@@ -65,7 +65,7 @@ Game.scenes.journey = (stage) => {
 
       if (!Game.unlocked(c.id)) {
         Game.sfx("bad");
-        Game.toast("Complete the earlier stop to unlock ${c.name}.");
+        Game.toast(`Complete the earlier stop to unlock ${c.name}.`);
         return;
       }
 
