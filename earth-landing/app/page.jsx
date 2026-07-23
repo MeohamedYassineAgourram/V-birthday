@@ -1,31 +1,45 @@
-"use client";
-
-import dynamic from "next/dynamic";
-import ContentCard from "@/components/ContentCard";
-
-// The R3F scene is client-only (WebGL) — never server-render it.
-const Scene = dynamic(() => import("@/components/Scene"), {
-  ssr: false,
-  loading: () => <div className="absolute inset-0 bg-space" />,
-});
+import Link from "next/link";
 
 export default function Page() {
   return (
-    <main className="relative h-[100dvh] w-screen overflow-hidden bg-space">
-      {/* fullscreen space + earth */}
-      <Scene />
+    <main className="dream-landing">
+      <div className="dream-sky" aria-hidden="true">
+        <div className="dream-sun" />
+        <div className="dream-cloud cloud-one"><i /><i /><i /></div>
+        <div className="dream-cloud cloud-two"><i /><i /><i /></div>
+        <div className="dream-cloud cloud-three"><i /><i /><i /></div>
+        <div className="dream-cloud cloud-four"><i /><i /><i /></div>
+        <div className="dream-birds"><i /><i /><i /></div>
 
-      {/* faint vignette to seat the composition */}
-      <div
-        className="pointer-events-none absolute inset-0 z-[5]"
-        style={{
-          background:
-            "radial-gradient(120% 90% at 30% 40%, transparent 40%, rgba(3,4,10,0.55) 100%)",
-        }}
-      />
+        <div className="dream-mountains mountain-far" />
+        <div className="dream-mountains mountain-mid" />
+        <div className="dream-mountains mountain-near" />
 
-      {/* left floating glass card */}
-      <ContentCard />
+        <section className="dream-island">
+          <div className="island-grass" />
+          <div className="island-rock rock-left" />
+          <div className="island-rock rock-right" />
+          <div className="island-rock rock-core" />
+          <div className="island-path" />
+          <div className="dream-gateway" aria-hidden="true">
+            <i className="gateway-stone stone-top" />
+            <i className="gateway-stone stone-left" />
+            <i className="gateway-stone stone-right" />
+            <i className="gateway-light" />
+          </div>
+        </section>
+      </div>
+
+      <section className="dream-intro">
+        <p className="dream-kicker">A private little adventure</p>
+        <h1>The hidden horizon</h1>
+        <p className="dream-subtitle">There is a world beyond the clouds, built for you to explore.</p>
+        <Link className="dream-begin" href="/journey">
+          Begin the journey <span aria-hidden="true">→</span>
+        </Link>
+      </section>
+
+      <p className="dream-note">Follow the light</p>
     </main>
   );
 }

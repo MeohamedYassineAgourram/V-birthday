@@ -1,16 +1,16 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Viviane's Route",
-  description: "A cinematic journey around the world.",
-  icons: { icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>\uD83C\uDF0D</text></svg>" },
+  title: "The Hidden Horizon",
+  description: "A private adventure through an imaginary world.",
+  icons: { icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>" },
 };
 
 export const viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
-  themeColor: "#03040a",
+  themeColor: "#bcebf4",
 };
 
 export default function RootLayout({ children }) {
