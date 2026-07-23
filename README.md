@@ -17,8 +17,8 @@ Close the running app with:
 ./close.sh
 ```
 
-The CSS-painted imaginary-world landing is served at `/`. Its **Begin the journey**
-action opens the complete five-era birthday game at `/journey` in the same application.
+The atmospheric Earth landing is served at `/`. Its **Begin the journey** action opens
+the complete five-era birthday game at `/journey` in the same application.
 
 ## Structure
 

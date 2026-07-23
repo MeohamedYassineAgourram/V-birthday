@@ -27,7 +27,7 @@ Game.scenes.journey = (stage) => {
 
     return `<article class="destination-card ${state}" data-id="${c.id}" data-slot="0"
       data-index="${index}" style="--c:${c.tint}" role="button" aria-label="${c.name}${open ? "" : ", locked"}" tabindex="${open ? "0" : "-1"}">
-      <div class="destination-image realm-card realm-card-${c.id}"></div>
+      <div class="destination-image" style="background-image:url('${c.image}')"></div>
       <div class="destination-shade"></div>
       <div class="destination-topline">
         <span class="destination-step">${String(index + 1).padStart(2, "0")} / ${COUNTRIES.length}</span>

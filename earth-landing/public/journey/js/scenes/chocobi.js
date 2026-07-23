@@ -1,4 +1,4 @@
-/* Era 3 — Singing Dunes. Catch bright time-shards, dodge the static. */
+/* Era 3 — Azure Coves. Catch bright time-shards, dodge the static. */
 Game.games.chocobi = (stage, c) => {
   const target = CONFIG.chocobiTarget;
 
@@ -7,12 +7,12 @@ Game.games.chocobi = (stage, c) => {
         <div class="glyph" style="--c:#E3B341">◈</div>
       <div class="t">
         <div class="kicker" style="--c:${(c&&c.tint)||'#7FA8C4'}">${c?c.flag+' '+c.name:''} · Gather</div>
-        <h2>Falling time-shards</h2>
+        <h2>Falling tide-shards</h2>
         <p>Catch <b>${target}</b> bright shards. The green static interrupts the signal.</p>
       </div>
     </div>
     <div class="frame" id="frame">
-      <div class="frame-bg dune-frame"></div>
+      <div class="frame-bg" style="background-image:url('${c.image}')"></div>
       <div class="frame-veil"></div>
       <div class="hud-pill" id="score">0 / ${target}</div>
       <div class="hud-hint">mouse · finger · ← →</div>

@@ -2,15 +2,15 @@
 
 The unified Next.js application for Viviane's birthday adventure.
 
-The landing page at `/` is an original CSS-painted imaginary world. Its **Begin the
-journey** action opens `/journey`, an interactive five-era route that preserves the
-original game mechanics while changing the setting to time travel:
+The landing page at `/` is an atmospheric Earth experience. Its **Begin the journey**
+action opens `/journey`, an interactive five-era route that preserves the original game
+mechanics while changing the setting to time travel:
 
 1. **Tidebreak Isles** — memory pairs
 2. **Sunstone Ruins** — precision beacons
-3. **The Singing Dunes** — falling time-shards
+3. **Azure Coves** — falling time-shards
 4. **The Waterfall Archives** — rune sequencing
-5. **The Moonlit Sanctuary** — the birthday finale
+5. **The Floating Sanctuary** — the birthday finale
 
 ## Run
 
@@ -35,7 +35,7 @@ npm run dev
 
 ## Notes
 
-- The landing and era landscapes are CSS-built original artwork; no reference imagery
-  is used as a site asset.
+- The five era landscapes use the images supplied for this project and are stored in
+  `public/journey/img/worlds/`.
 - The journey is served from `public/journey/` inside the same Next.js app.
 - The project is intended to run only on port `3003`.

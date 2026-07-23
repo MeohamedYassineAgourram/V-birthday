@@ -2,21 +2,21 @@
 
 /* The five eras stay in a fixed order; each keeps its original minigame. */
 const COUNTRIES = [
-  { id: "japan",   name: "Tidebreak Isles",      city: "Year 4021 · Azure Age",      flag: "✦",
+  { id: "japan",   name: "Tidebreak Isles",      city: "Year 4021 · Azure Age",      flag: "✦", image: "img/worlds/tidebreak-isles.webp",
     game: "memory",   tint: "#4BC8D4", stamp: "TIDE", code: "TIDE//01",
     brief: "The sea remembers every path. Restore the lost pairs before the islands drift apart." },
-  { id: "korea",   name: "Sunstone Ruins",        city: "Year 1680 · Amber Age",      flag: "☼",
+  { id: "korea",   name: "Sunstone Ruins",        city: "Year 1680 · Amber Age",      flag: "☼", image: "img/worlds/sunstone-ruins.webp",
     game: "valorant", tint: "#EF9C59", stamp: "SUN", code: "SUN//02",
     brief: "An old observatory is waking up. Calibrate every beacon to reopen the next era." },
-  { id: "morocco", name: "The Singing Dunes",     city: "Year 0407 · Sand Age",       flag: "◈",
+  { id: "morocco", name: "Azure Coves",           city: "Year 0407 · Tide Age",       flag: "◈", image: "img/worlds/azure-coves.jpeg",
     game: "chocobi",  tint: "#E4B144", stamp: "DUNE", code: "DUNE//03",
-    brief: "Small time-shards fall with the desert wind. Catch the bright ones and avoid the static." },
-  { id: "china",   name: "The Waterfall Archives",city: "Year 2860 · Rain Age",       flag: "✺",
+    brief: "Small time-shards fall with the sea breeze. Catch the bright ones and avoid the static." },
+  { id: "china",   name: "The Waterfall Archives",city: "Year 2860 · Rain Age",       flag: "✺", image: "img/worlds/waterfall-archives.jpeg",
     game: "debugjs",  tint: "#78C99A", stamp: "RAIN", code: "RAIN//04",
     brief: "The archive's sequence is broken. Put the runes back in order to let the river flow." },
-  { id: "france",  name: "The Moonlit Sanctuary", city: "Beyond time · Homeward Age", flag: "☾",
+  { id: "france",  name: "The Floating Sanctuary", city: "Beyond time · Homeward Age", flag: "☾", image: "img/worlds/floating-sanctuary.webp",
     game: "cake",     tint: "#B69AF5", stamp: "HOME", finale: true, code: "HOME//05",
-    brief: "The last gate is waiting in the quiet moonlight. One wish will bring the journey home." }
+    brief: "The last gate waits above the still water. One wish will bring the journey home." }
 ];
 const byId = id => COUNTRIES.find(c => c.id === id);
 
@@ -62,7 +62,7 @@ const Game = {
     const c = byId(name);
     const ov = document.getElementById("warp");
     if (!ov) { this.go(name); return; }
-    ov.style.setProperty("--img", "none");
+    ov.style.setProperty("--img", c ? `url("${c.image}")` : "none");
     ov.style.setProperty("--tint", c ? c.tint : "#0a0e17");
     ov.classList.remove("out"); ov.classList.add("in");
     this.sfx("whoosh");
@@ -79,7 +79,7 @@ const Game = {
     document.body.dataset.world = name;
     const bd = document.getElementById("backdrop");
     if (bd) {
-      bd.style.backgroundImage = "";
+      bd.style.backgroundImage = c ? `url("${c.image}")` : "";
       bd.classList.toggle("on", name !== "globe");
     }
     document.documentElement.style.setProperty("--tint", c ? c.tint : "#5B8DEF");
