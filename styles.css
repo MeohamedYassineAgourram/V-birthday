@@ -224,10 +224,10 @@ p{margin:0 0 12px;line-height:1.62;color:var(--fg-2);font-size:clamp(14.5px,1.55
 }
 .eyebrow .leaf{filter:saturate(1.1)}
 .map-title{
-  font-size:clamp(30px,4.6vw,52px);font-weight:300;letter-spacing:-.04em;line-height:1.04;margin:0 0 12px;
+  font-size:clamp(28px,4vw,46px);font-weight:300;letter-spacing:-.04em;line-height:1.04;margin:0 0 10px;
 }
-.map-sub{max-width:52ch;margin:0 auto;color:var(--fg-2);font-size:clamp(14px,1.55vw,16px);line-height:1.6}
-.map-wrap .cta-row{margin-top:18px;margin-bottom:0}
+.map-sub{max-width:46ch;margin:0 auto;color:var(--fg-2);font-size:clamp(13.5px,1.4vw,15px);line-height:1.55}
+.map-wrap .cta-row{margin-top:14px;margin-bottom:0}
 .btn.solid span,.btn.ghost span{font-size:1.05em;opacity:.85}
 
 .map-foot-left{
@@ -246,9 +246,9 @@ p{margin:0 0 12px;line-height:1.62;color:var(--fg-2);font-size:clamp(14.5px,1.55
 }
 .foot-seal.on{background:var(--c);color:#fff;border-color:transparent;box-shadow:var(--shadow)}
 
-.viewport{position:relative;width:100%;height:min(44vh,400px);cursor:grab;touch-action:none;margin-top:20px}
+.viewport{position:relative;width:100%;height:min(60vh,600px);cursor:grab;touch-action:none;margin-top:8px}
 /* soft grounding glow + orbit hint behind the island, like the reference */
-.stage-glow{position:absolute;left:50%;top:52%;width:min(60%,520px);aspect-ratio:1;transform:translate(-50%,-50%);
+.stage-glow{position:absolute;left:50%;top:58%;width:min(72%,680px);aspect-ratio:1;transform:translate(-50%,-50%);
   pointer-events:none;z-index:0;
   background:radial-gradient(circle, rgba(46,125,79,.08) 0%, rgba(46,125,79,0) 62%);}
 .stage-glow::after{content:"";position:absolute;left:50%;top:58%;width:82%;height:34%;transform:translate(-50%,-50%);
@@ -261,9 +261,11 @@ p{margin:0 0 12px;line-height:1.62;color:var(--fg-2);font-size:clamp(14.5px,1.55
   position:absolute;left:0;top:0;opacity:0;pointer-events:none;cursor:pointer;
   display:flex;flex-direction:column;align-items:center;gap:1px;padding:7px 14px;border-radius:13px;
   background:#fff;border:1px solid rgba(28,36,32,.14);
-  box-shadow:0 4px 14px rgba(40,60,50,.14),0 1px 3px rgba(40,60,50,.1);color:var(--fg);
-  transition:opacity .3s,transform .22s var(--ease),box-shadow .22s;white-space:nowrap;
+  box-shadow:0 6px 18px rgba(40,60,50,.16),0 1px 3px rgba(40,60,50,.1);color:var(--fg);
+  transition:opacity .2s ease,transform .12s linear;white-space:nowrap;
 }
+.signpost.hot{opacity:1}                    /* show only the hovered marker's label */
+.signpost.off{opacity:0 !important}
 .signpost::after{content:"";position:absolute;left:50%;bottom:-5px;width:9px;height:9px;
   transform:translateX(-50%) rotate(45deg);background:#fff;
   border-right:1px solid rgba(28,36,32,.14);border-bottom:1px solid rgba(28,36,32,.14)}

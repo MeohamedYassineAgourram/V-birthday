@@ -104,33 +104,17 @@ Game.scenes.world = (stage) => {
       })
     : null;
 
-  /* Lay the labels out once per frame.
-     The summit sits at the island's centre, so whatever is directly behind it
-     projects to nearly the same point — placing each label independently made
-     them overlap. Resolve collisions across the whole set instead. */
-  const GAP = 40, NEAR = 104;
+  /* Only the hovered marker shows a label (a clean tooltip, like the reference),
+     so each just tracks its own projected point every frame — no collision logic. */
   let layoutRaf = 0;
   const layout = () => {
     if (!view.isConnected) return;
     layoutRaf = requestAnimationFrame(layout);
-    const H = viewport.clientHeight;
-    const items = STOPS
-      .map(s => ({ id: s.id, ...proj[s.id] }))
-      .filter(p => p.x !== undefined)
-      .sort((a, b) => a.y - b.y);
-
-    const placed = [];
-    items.forEach(p => {
-      let y = Math.max(52, Math.min(H - 14, p.y));
-      placed.forEach(q => {
-        if (Math.abs(q.x - p.x) < NEAR && Math.abs(q.y - y) < GAP) y = q.y + GAP;
-      });
-      placed.push({ x: p.x, y });
-      const n = nodes[p.id];
-      if (!n) return;
-      n.style.transform = `translate(-50%,-100%) translate(${p.x}px,${y}px)`;
-      n.style.opacity = p.visible ? "1" : "0";
-      n.style.pointerEvents = p.visible ? "auto" : "none";
+    STOPS.forEach(s => {
+      const p = proj[s.id], n = nodes[s.id];
+      if (!n || !p || p.x === undefined) return;
+      n.style.transform = `translate(-50%,-100%) translate(${p.x}px,${p.y}px)`;
+      n.classList.toggle("off", !p.visible);
     });
   };
   if (Game._3d) layout();

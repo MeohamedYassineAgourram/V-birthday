@@ -14,9 +14,10 @@ Opening `index.html` directly works too — classic scripts, no modules, no buil
 ## The world
 
 The landing page *is* the map: a detailed glTF floating island (a house with a blue roof,
-a waterfall, pines, drifting rock debris) turning slowly on a clean white studio backdrop. You **drag to orbit** it; a faint green
-orbit ring and small floating spheres/hexagons drift around it. Five waypoints glow on the
-island, each with a signpost anchored to it in HTML, tracked to its 3D position every frame.
+a waterfall, pines, drifting rock debris) large and centre-stage on a clean white studio backdrop — the hero of the page. You **drag
+to orbit** it; a faint green orbit ring and small spheres/hexagons drift at its periphery.
+Five waypoint gems glow on the island; hovering one reveals its label as a floating tooltip
+(anchored in HTML, tracked to the 3D point each frame), and clicking it enters that trial.
 
 The model ships at `models/island.glb` (~15 MB). The original was 163 MB — see *The model*
 below.

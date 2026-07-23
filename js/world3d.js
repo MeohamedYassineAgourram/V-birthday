@@ -67,7 +67,7 @@ const World3D = (() => {
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(34, W0 / H0, .01, 100);
-    const CAM_R = 5.1, CAM_Y = 2.35;
+    const CAM_R = 4.6, CAM_Y = 1.95;
     let camAngle = -.6, camAngleT = -.6;
 
     // clean, bright, neutral studio light — the minimal look, not a sunset
@@ -86,8 +86,8 @@ const World3D = (() => {
     deco.position.y = .1;
     scene.add(deco);
     const ring = new THREE.Mesh(
-      new THREE.TorusGeometry(2.55, .006, 3, 120),
-      new THREE.MeshBasicMaterial({ color: 0x2E7D4F, transparent: true, opacity: .18 })
+      new THREE.TorusGeometry(3.9, .006, 3, 120),
+      new THREE.MeshBasicMaterial({ color: 0x2E7D4F, transparent: true, opacity: .16 })
     );
     deco.add(ring);
     const accents = [];
@@ -96,12 +96,12 @@ const World3D = (() => {
     for (let i = 0; i < 7; i++) {
       const white = i % 3 === 0;
       const m = new THREE.Mesh(
-        white ? new THREE.SphereGeometry(.07 + Math.random() * .05, 16, 12)
-              : new THREE.DodecahedronGeometry(.11 + Math.random() * .07, 0),
+        white ? new THREE.SphereGeometry(.06 + Math.random() * .04, 16, 12)
+              : new THREE.DodecahedronGeometry(.09 + Math.random() * .05, 0),
         white ? whiteMat : accentMat
       );
-      m.userData = { a: (i / 7) * Math.PI * 2, r: 2.55, sp: .12 + Math.random() * .1,
-                     yb: (Math.random() - .5) * .3, spin: (Math.random() - .5) * .04 };
+      m.userData = { a: (i / 7) * Math.PI * 2, r: 3.7 + Math.random() * .5, sp: .12 + Math.random() * .1,
+                     yb: -.6 + (Math.random() - .5) * .5, spin: (Math.random() - .5) * .04 };
       accents.push(m); deco.add(m);
     }
 
@@ -143,7 +143,7 @@ const World3D = (() => {
       const box = new THREE.Box3().setFromObject(model);
       const size = box.getSize(new THREE.Vector3());
       const ctr = box.getCenter(new THREE.Vector3());
-      const scale = 2.7 / Math.max(size.x, size.z);
+      const scale = 3.05 / Math.max(size.x, size.z);
       model.position.set(-ctr.x, -ctr.y, -ctr.z);
       const holder = new THREE.Group();
       holder.add(model);
@@ -153,7 +153,7 @@ const World3D = (() => {
       ISLAND_TOP = (box.max.y - ctr.y) * scale;      // grass level in world units
 
       // waypoints on a ring over the grass, clear of the house; the wish sits centre
-      const ringR = 1.0;
+      const ringR = 1.3;
       stops.forEach((s, i) => {
         const m = marker(s.color);
         const a = s.mapAngle !== undefined ? s.mapAngle : (i / stops.length) * Math.PI * 2;
@@ -180,7 +180,7 @@ const World3D = (() => {
       if (!dragging && !reduced) camAngleT += .0012;
       camAngle += (camAngleT - camAngle) * .07;
       camera.position.set(Math.sin(camAngle) * CAM_R, CAM_Y, Math.cos(camAngle) * CAM_R);
-      camera.lookAt(0, .62, 0);
+      camera.lookAt(0, -.15, 0);
 
       root.position.y = Math.sin(t * .5) * .05;
       root.rotation.z = Math.sin(t * .38) * .008;
@@ -216,7 +216,7 @@ const World3D = (() => {
 
           if (opts.onProject) {
             m.getWorldPosition(v);
-            v.y += .8;
+            v.y += .72;
             v.project(camera);
             opts.onProject(d.id, (v.x * .5 + .5) * container.clientWidth,
                                 (-v.y * .5 + .5) * container.clientHeight, v.z < 1);
