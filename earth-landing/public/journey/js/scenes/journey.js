@@ -1,70 +1,107 @@
-/* The journey board — a Vision-Pro style deck of country cards.
-   A big focused card in the middle, a filmstrip of all five below. */
+/* The journey board — an immersive, floating deck of destination cards.
+   The active location sits in front while the rest of the route is layered
+   behind it, so the board feels like a physical set of travel cards. */
 Game.scenes.journey = (stage) => {
-  const target = Game.nextCountry() || COUNTRIES[COUNTRIES.length - 1];
-  let focus = target.id;
+  let focus = (Game.nextCountry() || COUNTRIES[COUNTRIES.length - 1]).id;
 
-  const view = el(`<section class="journey enter">
-    <div class="j-head">
-      <div class="eyebrow"><span class="dot-live"></span> The journey · ${Game.lit} of ${COUNTRIES.length} cleared</div>
-      <h1 class="j-title">The route is yours to unlock</h1>
-    </div>
+  const view = el(`<section class="journey journey-deck enter">
+    <header class="journey-head">
+      <div class="eyebrow"><span class="dot-live"></span> Route selection · ${Game.lit} of ${COUNTRIES.length} cleared</div>
+      <h1 class="journey-title">Choose your next destination</h1>
+      <p>Each stop unlocks a new part of the journey.</p>
+    </header>
 
-    <div class="deck" id="deck"></div>
-
-    <div class="filmstrip" id="strip"></div>
+    <div class="destination-deck" id="destinationDeck" aria-label="Journey destinations"></div>
+    <p class="deck-hint">Select an available destination to bring it forward.</p>
   </section>`);
   stage.appendChild(view);
 
-  const deck = view.querySelector("#deck");
-  const strip = view.querySelector("#strip");
+  const deck = view.querySelector("#destinationDeck");
+  const cards = new Map();
 
-  const render = () => {
-    const c = byId(focus);
-    const done = Game.done.has(c.id);
+  const cardMarkup = (c, index) => {
     const open = Game.unlocked(c.id);
-    const idx = COUNTRIES.indexOf(c) + 1;
+    const done = Game.done.has(c.id);
+    const action = done ? "Replay mission" : c.finale ? "Arrive in Paris" : "Begin mission";
+    const state = done ? "cleared" : open ? "available" : "locked";
 
-    deck.innerHTML = "";
-    const card = el(`<article class="dcard ${done ? "done" : ""} ${open ? "" : "locked"}" style="--c:${c.tint}">
-      <div class="dcard-img" style="background-image:url('img/loc/${c.id}_card.jpg')"></div>
-      <div class="dcard-glass">
-        <div class="dcard-top">
-          <span class="dcard-flag">${c.flag}</span>
-          <span class="dcard-step">${c.code} · stop ${idx} / ${COUNTRIES.length}</span>
-          ${done ? `<span class="dcard-check">✓ cleared</span>`
-                 : open ? "" : `<span class="dcard-lock">🔒 locked</span>`}
-        </div>
-        <div class="dcard-body">
-          <div class="dcard-city">${c.flag} ${c.city}</div>
-          <h2 class="dcard-name">${c.name}</h2>
-          <p class="dcard-brief">${c.brief}</p>
-          <div class="cta-row" style="justify-content:flex-start;margin-top:16px">
-            ${open
-              ? `<button class="btn glow" id="go">${done ? "Replay" : (c.finale ? "Arrive in Paris" : "Begin mission")} <span>→</span></button>`
-              : `<button class="btn ghost" disabled>Clear the earlier stops first</button>`}
-          </div>
-        </div>
+    return `<article class="destination-card ${state}" data-id="${c.id}" data-slot="0"
+      data-index="${index}" style="--c:${c.tint}" role="button" aria-label="${c.name}${open ? "" : ", locked"}" tabindex="${open ? "0" : "-1"}">
+      <div class="destination-image" style="background-image:url('img/loc/${c.id}_card.jpg')"></div>
+      <div class="destination-shade"></div>
+      <div class="destination-topline">
+        <span class="destination-step">${String(index + 1).padStart(2, "0")} / ${COUNTRIES.length}</span>
+        <span class="destination-state">${done ? "Cleared" : open ? "Available" : "Locked"}</span>
       </div>
-    </article>`);
-    deck.appendChild(card);
-    const go = card.querySelector("#go");
-    if (go) go.onclick = () => { Game.audio(); Game.sfx("good"); Game.travel(c.id); };
-
-    strip.querySelectorAll(".thumb").forEach(t =>
-      t.classList.toggle("on", t.dataset.id === focus));
+      <div class="destination-caption">
+        <span class="destination-flag">${c.flag}</span>
+        <span>${c.name}</span>
+      </div>
+      <div class="destination-copy">
+        <p class="destination-code">${c.code}</p>
+        <h2>${c.name}</h2>
+        <p class="destination-city">${c.flag} ${c.city}</p>
+        <p class="destination-brief">${c.brief}</p>
+        <button class="destination-action" type="button">${action} <span>→</span></button>
+      </div>
+      <div class="destination-lock" aria-hidden="true"><span>✦</span><p>Complete the earlier stop first</p></div>
+    </article>`;
   };
 
-  COUNTRIES.forEach(c => {
-    const done = Game.done.has(c.id), open = Game.unlocked(c.id);
-    const t = el(`<button class="thumb ${done ? "done" : ""} ${open ? "" : "locked"}" data-id="${c.id}"
-        style="--c:${c.tint};background-image:url('img/loc/${c.id}_card.jpg')" title="${c.name}">
-      <span class="thumb-flag">${c.flag}</span>
-      ${done ? `<span class="thumb-check">✓</span>` : open ? "" : `<span class="thumb-lock">🔒</span>`}
-    </button>`);
-    t.onclick = () => { focus = c.id; Game.sfx("pop"); render(); };
-    strip.appendChild(t);
+  COUNTRIES.forEach((c, index) => {
+    const card = el(cardMarkup(c, index));
+    cards.set(c.id, card);
+    deck.appendChild(card);
+
+    card.addEventListener("click", event => {
+      const isAction = event.target.closest(".destination-action");
+      if (isAction && c.id === focus && Game.unlocked(c.id)) {
+        event.stopPropagation();
+        Game.audio();
+        Game.sfx("good");
+        Game.travel(c.id);
+        return;
+      }
+
+      if (!Game.unlocked(c.id)) {
+        Game.sfx("bad");
+        Game.toast("Complete the earlier stop to unlock ${c.name}.");
+        return;
+      }
+
+      if (focus !== c.id) {
+        focus = c.id;
+        Game.sfx("pop");
+        updateDeck();
+      }
+    });
+
+    card.addEventListener("keydown", event => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        card.click();
+      }
+    });
   });
 
-  render();
+  const updateDeck = () => {
+    const focusIndex = COUNTRIES.findIndex(c => c.id === focus);
+
+    COUNTRIES.forEach((c, index) => {
+      const card = cards.get(c.id);
+      let slot = index - focusIndex;
+
+      // Keep all five cards in the same compact orbit around the active card.
+      if (slot > 2) slot -= COUNTRIES.length;
+      if (slot < -2) slot += COUNTRIES.length;
+
+      const active = slot === 0;
+      card.dataset.slot = String(slot);
+      card.classList.toggle("is-active", active);
+      card.setAttribute("aria-current", active ? "true" : "false");
+      card.style.zIndex = String(active ? 10 : 6 - Math.abs(slot));
+    });
+  };
+
+  updateDeck();
 };
