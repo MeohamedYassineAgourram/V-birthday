@@ -6,11 +6,16 @@ This repository now has one runnable application: the unified Next.js project in
 ## Run
 
 ```bash
-cd earth-landing
-npm run dev
+./launch.sh
 ```
 
 Open [http://localhost:3003](http://localhost:3003).
+
+Close the running app with:
+
+```bash
+./close.sh
+```
 
 The cinematic Earth landing is served at `/`. Its **Begin the journey** action opens
 the complete five-stop birthday game at `/journey` in the same application.
